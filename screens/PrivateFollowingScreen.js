@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, Animated, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Input, Item, Button, Card, CardItem, Body } from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import { Card, CardItem, Body } from 'native-base';
 import { useSelector, useDispatch } from 'react-redux';
 import * as FollowActions from '../store/actions/FollowActions';
 

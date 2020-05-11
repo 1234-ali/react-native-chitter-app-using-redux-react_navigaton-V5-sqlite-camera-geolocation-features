@@ -19,7 +19,35 @@ export const getChits = () => async dispatch => {
             payload: res.data
         });
     } catch (err) {
-        console.log(err)
         throw err
     }
 };
+
+export const postChits = (chit_content, longitude, latitude) => async dispatch => {
+    const token = await AsyncStorage.getItem('token');
+    if (token) {
+        setAuthToken(token);
+    }
+
+    const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+    
+      const body = JSON.stringify({ chit_content, longitude, latitude });
+
+    try {
+        const res = await axios.post(`${URL}/chits`, body, config);
+
+        console.log(res);
+        // dispatch({
+        //     type: GET_FOLLOWINGS,
+        //     payload: res.data
+        // });
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+};
+

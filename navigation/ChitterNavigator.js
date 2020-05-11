@@ -27,6 +27,7 @@ import DraftScreen from '../screens/DraftScreen';
 import PostScreen from '../screens/PostScreen';
 import UpdateDraftScreen from '../screens/UpdateDraftScreen';
 import PrivateUserScreen from '../screens/PrivateUserScreen';
+import UserScreen from '../screens/UserScreen';
 
 import CustomDrawerContent from '../components/CustomDrawerContent';
 
@@ -119,6 +120,7 @@ const ChitterNavigator = () => {
                         <Stack.Screen name="post" component={PostScreen} />
                         <Stack.Screen name="updateDraft" component={UpdateDraftScreen} />
                         <Stack.Screen name="privateUser" component={PrivateUserScreen} />
+                        <Stack.Screen name="user" component={UserScreen} />
                     </>
                 }
             </Stack.Navigator>

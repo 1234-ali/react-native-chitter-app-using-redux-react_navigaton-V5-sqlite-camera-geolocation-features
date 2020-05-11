@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Animated, TouchableWithoutFeedback, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Input, Item, Button, Icon, Header, Left, Title, Tab, Tabs, TabHeading, Right, Card, CardItem, Body } from 'native-base';
-import Modal from 'react-native-modal';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableWithoutFeedback, Image, TouchableOpacity, StatusBar } from 'react-native';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Icon, Header, Title, Tab, Tabs, TabHeading } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
-import { useSelector, useDispatch } from 'react-redux';
-import * as UserActions from '../store/actions/UserActions';
+import { useSelector } from 'react-redux';
 
 import FollowerScreen from './FollowerScreen';
 import ChitterScreen from './ChitterScreen';
@@ -32,8 +29,8 @@ const UserProfileScreen = ({ navigation }) => {
                 <View>
                     <Title style={styles.header}>User Profile</Title>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate('post')} style={styles.brushContainer}>
-                    <Ionicons name='ios-brush' style={styles.brushText} />
+                <TouchableOpacity onPress={() => navigation.navigate('user')} style={styles.brushContainer}>
+                    <Ionicons name='ios-settings' style={styles.brushText} />
                 </TouchableOpacity>
             </Header>
             <View style={styles.secondContainer}>
@@ -94,16 +91,12 @@ const styles = StyleSheet.create({
         fontFamily: book, 
         fontSize:hp(3.5)
     },
-    brushContainer: { 
-        backgroundColor: 'rgba(0 , 0 , 0 , .12)', 
-        borderRadius: 120, 
+    brushContainer: {
         alignItems: 'center' 
     },
     brushText: { 
         color: 'rgba(0 , 0 , 0, .7)', 
         fontSize: 25, 
-        padding: 9, 
-        paddingHorizontal: 10, 
         alignSelf:'center'  
     },
     backIcon: { 

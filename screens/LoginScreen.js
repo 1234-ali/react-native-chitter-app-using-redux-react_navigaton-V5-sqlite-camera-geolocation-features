@@ -4,7 +4,6 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { Input, Item, Button, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
 import Feather from 'react-native-vector-icons/Feather';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useSelector, useDispatch } from 'react-redux';
 import * as UserActions from '../store/actions/UserActions';
 
@@ -18,10 +17,8 @@ const LoginScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
 
     const [isFetching, setIsFetching] = useState(false);
-    const [isError, setIsError] = useState();
     const [isMessage, setIsMessage] = useState();
 
     const dispatch = useDispatch();
@@ -47,7 +44,6 @@ const LoginScreen = ({ navigation }) => {
         } else if (password.length < 6) {
             Alert.alert('Password length must be greater than 6 digits');
         } else {
-            setIsError(null);
             setIsMessage(null);
             setIsFetching(true);
             try {
@@ -57,7 +53,6 @@ const LoginScreen = ({ navigation }) => {
             }
             setIsFetching(false);
             setIsMessage(true);
-            setIsError(true);
         }
     };
 
@@ -65,14 +60,13 @@ const LoginScreen = ({ navigation }) => {
         navigation.navigate('home');
     };
 
-
     return (
          <View style={styles.container}>
              <StatusBar barStyle="dark-content" backgroundColor="white" />
              { isMessage && token.msg != '' && message() }
              <KeyboardAvoidingView behavior='position'>
-                <View style={{ height: 150, width: 150, marginTop: hp(5), alignSelf: 'center' }}>
-                    <Image source={require('../assets/images/logo5.jpg')} style={{ height: null, width: null, flex: 1 }} />
+                <View style={styles.imageContainer}>
+                    <Image source={require('../assets/images/logo5.jpg')} style={styles.image} />
                 </View>
                 <Card style={styles.cardContainer}>
                     <CardItem style={styles.cardItem}>
@@ -110,12 +104,6 @@ const LoginScreen = ({ navigation }) => {
                                     <Text  style={styles.buttonText}>Login</Text>
                                 </Button>
                             </Animated.View>
-                            {/* <TouchableOpacity onPress={() => navigation.navigate('forgetPassword')} style={styles.forgetButtonContainer}>
-                                <Text style={styles.forgetButtonText}>
-                                    Forget Password
-                                </Text>
-                                <AntDesign name="questioncircleo" size={hp(2)} color='#5C257F' style={styles.forgetButtonIcon} />
-                            </TouchableOpacity> */}
                         </Body>
                     </CardItem>
                 </Card>
@@ -224,6 +212,17 @@ const styles = StyleSheet.create({
         flex: 1, 
         justifyContent: 'center', 
         alignItems: 'center' 
+    },
+    imageContainer: { 
+        height: 150, 
+        width: 150, 
+        marginTop: hp(5), 
+        alignSelf: 'center' 
+    },
+    image: { 
+        height: null,
+        width: null, 
+        flex: 1 
     }
 });
 

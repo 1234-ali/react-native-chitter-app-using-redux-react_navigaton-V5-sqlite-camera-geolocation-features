@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView, Animated, TouchableOpacity, Image, ScrollView, Alert, StatusBar, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Image, TouchableWithoutFeedback, Animated, ActivityIndicator, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Input, Item, Button, Card, CardItem, Body } from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
+import { Input, Item, Button, Icon, Header, Title, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
+import Feather from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
 import * as UserActions from '../store/actions/UserActions';
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
-const SignUpScreen = ({ navigation }) => {
-    const token = useSelector(state => state.UserReducer);
+const UserScreen = ({ navigation }) => {
+    const user = useSelector(state => state.UserReducer.user);
 
     const [fadeAnim] = useState(new Animated.Value(0));
 
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState(user != null && user.given_name);
+    const [lastName, setLastName] = useState(user != null && user.family_name);
+    const [email, setEmail] = useState(user != null && user.email);
     const [password, setPassword] = useState('');
-    const [rePassword, setRePassword] = useState('');
 
     const [hidePassword, setHidePassword] = useState(true);
-    const [hideRePassword, setHideRePassword] = useState(true);
 
     const [isFetching, setIsFetching] = useState(false);
-    const [isError, setIsError] = useState();
-    const [isMessage, setIsMessage] = useState();
 
     useEffect(() => {
         Animated.timing(
@@ -44,42 +41,36 @@ const SignUpScreen = ({ navigation }) => {
     const onSubmit = async () => {
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-        if (firstName == '' || lastName == '' || email == '' || password == '' || rePassword == '' || reg.test(email) == false) {
+        if (firstName == '' || lastName == '' || email == '' || password == '' || reg.test(email) == false) {
             Alert.alert('Enter the valid credentials');
-        } else if (password != rePassword) {
-            Alert.alert('Password does not match');
         } else if (password.length < 6) {
             Alert.alert('Password length must be greater than 6 digits');
         } else {
-            setIsError(null);
-            setIsMessage(null);
             setIsFetching(true);
             try {
-                await dispatch(UserActions.register(firstName, lastName, email, password));
+                await dispatch(UserActions.UpdateUser(firstName, lastName, email, password));
             } catch (error) {
                 Alert.alert(error.message);
             }
-            setFirstName(''); setLastName(''); setEmail(''); setPassword(''); setRePassword('');
             setIsFetching(false);
-            setIsMessage(true);
-            setIsError(true);
         }
     };
 
-    const error = (error) => {
-        Alert.alert(error, '', [{text: 'OK', onPress: () => setIsError()}]);
-    };
-
-    const message = (msg) => {
-        Alert.alert(msg, '', [{text: 'OK', onPress: () => setIsMessage()}]);
-    };
-
     return (
-        <ScrollView style={{ flex: 1 }}>
-            <StatusBar barStyle="dark-content" backgroundColor="white" />
-            <View style={styles.container}>
-                { isError && token.error != '' && error(token.error) }
-                { isMessage && token.msg != '' && message(token.msg) }
+        <View style={styles.container}>
+            <Header style={styles.headerContainer}>
+                <StatusBar barStyle="dark-content" backgroundColor="white" /> 
+                <View>
+                    <TouchableWithoutFeedback onPress={() => navigation.goBack()}> 
+                        <Icon name='arrow-back' style={styles.backIcon} />
+                    </TouchableWithoutFeedback>
+                </View> 
+                <View>
+                    <Title style={styles.header}>Edit Profile</Title>
+                </View>
+                <Entypo name='water' style={styles.waterIcon} />
+            </Header>
+            <View style={{ flex: 1 }}>
                 <KeyboardAvoidingView behavior='position'>
                     <View style={styles.imageContainer}>
                         <Image source={require('../assets/images/logo5.jpg')} style={styles.image} />
@@ -87,9 +78,6 @@ const SignUpScreen = ({ navigation }) => {
                     <Card style={styles.cardContainer}>
                         <CardItem style={styles.cardItem}>
                             <Body style={styles.cardBody}>
-                                <Text style={styles.loginText}>
-                                    Sign Up
-                                </Text>
                                 <Item rounded style={styles.itemContainer}>
                                     <Input 
                                         placeholder='First Name' 
@@ -135,62 +123,67 @@ const SignUpScreen = ({ navigation }) => {
                                         <Feather name='eye-off' size={hp('2.5%')} color='#3A403D' onPress={() => setHidePassword(true)} style={styles.hideIcon} />
                                     }   
                                 </Item>
-                                <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
-                                    <Input 
-                                        placeholder='Confirm Password' 
-                                        autoCorrect={false} 
-                                        secureTextEntry={hideRePassword} 
-                                        style={styles.itemText} 
-                                        value={rePassword}
-                                        onChangeText={(text) => setRePassword(text)}
-                                    />
-                                    { hideRePassword ? 
-                                        <Feather name='eye' size={hp('2.5%')} color='#3A403D' onPress={() => setHideRePassword(false)} style={styles.hideIcon} />
-                                    :   
-                                        <Feather name='eye-off' size={hp('2.5%')} color='#3A403D' onPress={() => setHideRePassword(true)} style={styles.hideIcon} />
-                                    }   
-                                </Item>
                                 <Animated.View style={{ opacity: fadeAnim }}>
                                     <Button onPress={onSubmit} rounded success style={styles.buttonContainer}>
-                                        <Text  style={styles.buttonText}>Sign Up</Text>
+                                        <Text  style={styles.buttonText}>Submit</Text>
                                     </Button>
                                 </Animated.View>
                             </Body>
                         </CardItem>
                     </Card>
                 </KeyboardAvoidingView>
-                <View style={styles.signupContainer}> 
-                    <Text style={styles.createText}>
-                        Already have an account ? 
-                    </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('login')}>
-                        <Text style={styles.signupText}>
-                            Login
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <Modal isVisible={isFetching}>
-                    <View style={styles.indicator}>
-                        <ActivityIndicator size='large' color='white' />
-                    </View>
-                </Modal> 
             </View>
-        </ScrollView>
+            <Modal isVisible={isFetching}>
+                <View style={styles.indicator}>
+                    <ActivityIndicator size='large' color='white' />
+                </View>
+            </Modal> 
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
     },
+    headerContainer: { 
+        backgroundColor: 'white', 
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    header: { 
+        color: '#024873', 
+        fontFamily: book, 
+        fontSize:hp(3.5)
+    },
+    brushContainer: {
+        alignItems: 'center' 
+    },
+    brushText: { 
+        color: 'rgba(0 , 0 , 0, .7)', 
+        fontSize: 25, 
+        alignSelf:'center'  
+    },
+    backIcon: { 
+        color: '#024873', 
+        fontSize: 30,
+        marginLeft: 5  
+    },
+    waterIcon: { 
+        marginLeft: wp(5), 
+        fontSize: hp(3.1),  
+        color: 'blue', 
+        marginTop: hp(.5) 
+    },
+    
     cardContainer: { 
         width: wp(95), 
         backgroundColor:  '#F0F0F0',  
         justifyContent: 'center', 
         elevation: 8,  
-        marginTop: hp('5%') 
+        marginTop: hp('5%'),
+        alignSelf: 'center' 
     },
     cardItem: { 
         backgroundColor:  '#F0F0F0' 
@@ -268,14 +261,14 @@ const styles = StyleSheet.create({
     imageContainer: { 
         height: 150, 
         width: 150, 
-        marginTop: hp(5), 
+        marginTop: hp(4), 
         alignSelf: 'center' 
     },
     image: { 
-        height: null,
+        height: null, 
         width: null, 
-        flex: 1 
+        flex: 1
     }
 });
 
-export default SignUpScreen;
+export default UserScreen;

@@ -75,7 +75,7 @@ export const uploadImage = (image) => async dispatch => {
     }
   )
   .then((responseData) => {
-    console.log("Success")
+    console.log("Success" + JSON.stringify(responseData));
   })
   .catch((error) => {
     console.log("ERROR ")
@@ -103,6 +103,32 @@ export const register = (given_name, family_name, email, password) => async disp
   }
 };
 
+export const UpdateUser = (given_name, family_name, email, password) => async dispatch => {
+  const token = await AsyncStorage.getItem('token');
+  if (token) {
+    setAuthToken(token);
+  }
+  
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const item = await AsyncStorage.getItem('id');
+
+  const id = parseInt(item);
+
+  const body = JSON.stringify({ given_name, family_name, email, password });
+
+  try {
+    await axios.patch(`${URL}/user/${id}`, body, config);
+
+    dispatch(loadUser());
+  } catch (err) {
+    throw err;
+  }
+};
 
 export const login = (email, password) => async dispatch => {
   const config = {
@@ -124,8 +150,7 @@ export const login = (email, password) => async dispatch => {
     dispatch(loadUser());
     
   } catch (err) {
-
-    throw err
+    throw err;
   }
 };
 

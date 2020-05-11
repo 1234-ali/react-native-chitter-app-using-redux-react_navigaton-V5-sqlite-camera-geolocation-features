@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, TextInput, TouchableWithoutFeedback, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Input, Item, Button, Icon, Header, Left, Title, Tab, Tabs, TabHeading, Right, Card, CardItem, Body } from 'native-base';
+import { Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Geolocation from '@react-native-community/geolocation';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
 import * as DraftActions from '../store/actions/DraftActions';
+import * as ChitActions from '../store/actions/ChitActions';
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
@@ -20,6 +23,12 @@ const PostScreen = ({ navigation, route }) => {
 
     const [title, setTitle] = useState('');
     const [image, setImage] = useState('');
+    const [fetchingLocation, setFetchingLocation] = useState(false);
+
+    const [lat, setLat] = useState('');
+    const [lng, setLng] = useState('');
+
+    const [isPosting, setIsPosting] = useState(false);
 
     const [isDrafting, setIsDrafting] = useState(false);
     const [isCreated, setIsCreated] = useState(false);
@@ -73,7 +82,32 @@ const PostScreen = ({ navigation, route }) => {
     
     }
 
+    const getLocationHandler =  () => {
+        setFetchingLocation(true);
+        Geolocation.getCurrentPosition(
+            position => {
+              setLng(position.coords.longitude);
+              setLat(position.coords.latitude);
+            },
+            error => {
+                Alert.alert('Error', error.message);
+            },
+            {enableHighAccuracy: false, timeout: 20000, maximumAge: 1000},
+        );
+        setFetchingLocation(false);
+    };
+
     const dispatch = useDispatch();
+
+    const postSubmission = async () => {
+        setIsPosting(true);
+        try {
+            await dispatch(ChitActions.postChits(title, lng, lat));
+            setIsCreated(true);
+        } catch (error) {
+            setIsError(true);
+        }
+    };
 
     const draftSubmission = async () => {
         setIsDrafting(true);
@@ -89,6 +123,7 @@ const PostScreen = ({ navigation, route }) => {
         setIsError(false);
         setIsCreated(false);
         setIsDrafting(false);
+        setIsPosting(false);
     };
 
     const onNavigate = () => {
@@ -101,8 +136,8 @@ const PostScreen = ({ navigation, route }) => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.brushContainer}>
                     <Ionicons name='ios-close' style={styles.brushText} />
                 </TouchableOpacity>
-                <View style={{ flexDirection: 'row'}}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={{ ...styles.PostContainer }}>
+                <View style={{ flexDirection: 'row' }}>
+                <TouchableOpacity onPress={postSubmission} style={{ ...styles.PostContainer }}>
                     <Text style={styles.postText}>
                         Post
                     </Text>
@@ -115,7 +150,7 @@ const PostScreen = ({ navigation, route }) => {
                 </View>
             </View>
             <View style={styles.secondContainer}>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={styles.flexDirection}>
                     <Image source={{ uri: `${userImg}` }} style={styles.imgFront} />
                     <TextInput 
                         multiline={true}
@@ -127,14 +162,39 @@ const PostScreen = ({ navigation, route }) => {
                         onChangeText={(text) => setTitle(text)}
                     />
                 </View>
-                { image != '' &&
-                    <>
-                        <Image source={{ uri: `${image}` }} style={styles.img} />
-                        <TouchableOpacity onPress={() => setImage('')} style={styles.imgIconContainer}>
-                            <Ionicons name='ios-close' style={styles.imgIcon} />
-                        </TouchableOpacity>
-                    </>
-                }
+                <View style={styles.subContainer}>
+                    <View style={styles.locationSubContainer}>
+                        { lat != '' &&  lng != '' &&
+                            <>
+                                <View style={styles.locationContainer}>
+                                    <Text style={styles.locationText}>
+                                        Latitude: 
+                                    </Text>
+                                    <Text style={{...styles.locationText, marginLeft: wp(1)}}>
+                                        {lat.toFixed(3)} 
+                                    </Text>
+                                </View>
+                                <View style={styles.locationContainer}>
+                                    <Text style={styles.locationText}>
+                                        Longitude: 
+                                    </Text>
+                                    <Text style={{...styles.locationText, marginLeft: wp(1)}}>
+                                        {lng.toFixed(2)}
+                                    </Text>
+                                </View>
+                            </>
+                        }
+                    </View>
+
+                    { image != '' &&
+                        <View >
+                            <Image source={{ uri: `${image}` }} style={styles.img} />
+                            <TouchableOpacity onPress={() => setImage('')} style={styles.imgIconContainer}>
+                                <Ionicons name='ios-close' style={styles.imgIcon} />
+                            </TouchableOpacity>
+                        </View>
+                    }
+                </View>
             </View>
             <View style={styles.cameraMainContainer}>
                 <TouchableOpacity onPress={launchCamera} style={styles.cameraContainer}>
@@ -143,10 +203,43 @@ const PostScreen = ({ navigation, route }) => {
                 <TouchableOpacity onPress={launchImageLibrary} style={styles.cameraContainer}>
                     <FontAwesome name='image' style={styles.cameraIcon} />
                 </TouchableOpacity>
+                <TouchableOpacity onPress={getLocationHandler} style={styles.cameraContainer}>
+                    { !fetchingLocation ?
+                        <Entypo name='location-pin' style={styles.cameraIcon} />
+                    :
+                        <ActivityIndicator size='small' color='rgba(0 , 0 , 0, .7)' />
+                    }
+                </TouchableOpacity>
             </View>
+            <Modal isVisible={isPosting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
+                    <View style={styles.modalCardView}>
+                        { !isCreated ? 
+                                <ActivityIndicator size='large' color='white' />
+                            :
+                                <Card style={styles.modalCardContainer}>
+                                    <CardItem style={styles.modalCardItem}>
+                                        <Body style={styles.modalPortfolio}>
+                                            <Text style={styles.modalPortfolioText}>
+                                                {isError ? 'An Error Occured' : 'Chit Post'}
+                                            </Text>
+                                            <TouchableOpacity 
+                                                onPress={isError ? onError : onNavigate}  
+                                                activeOpacity={0.6} 
+                                                style={styles.modalCardButtonContainer}
+                                            >
+                                                <Text style={styles.modalCardButtonText}>
+                                                    {isError ? 'Try Again' : 'Go To Main Screen'}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </Body>
+                                    </CardItem>
+                                </Card>
+                        }
+                    </View>
+                </Modal>
             <Modal isVisible={isDrafting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
                     <View style={styles.modalCardView}>
-                        {!isCreated ? 
+                        { !isCreated ? 
                                 <ActivityIndicator size='large' color='white' />
                             :
                                 <Card style={styles.modalCardContainer}>
@@ -211,9 +304,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         fontFamily: medium
     },
+    flexDirection: { 
+        flexDirection: 'row' 
+    },
     secondContainer: { 
         flex: 1, 
         marginTop: hp(2) 
+    },
+    subContainer: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-between' 
     },
     imgFront: {
         width: wp('13%'),
@@ -255,11 +355,10 @@ const styles = StyleSheet.create({
         width: wp(50), 
         height: hp(40),
         resizeMode: 'cover', 
-        alignSelf: 'flex-end',
         margin: 12,
         borderWidth: 1,
         borderRadius: 25,
-        overflow: 'hidden' 
+        overflow: 'hidden' ,
     },
     imgIconContainer: { 
         width: 35,
@@ -311,6 +410,20 @@ const styles = StyleSheet.create({
         flex: 1, 
         alignItems: 'center', 
         justifyContent: 'center' 
+    },
+    locationContainer: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-evenly',
+        marginVertical: hp(1)
+    },
+    locationText: { 
+        fontFamily: 'medium', 
+        fontSize: hp(2.1),
+        color:  '#027368'
+    },
+    locationSubContainer: { 
+        marginTop: hp(2), 
+        marginLeft: wp(4), 
     }
 })
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Input, Button, Icon, Header, Card, CardItem, Body } from 'native-base';
-import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,14 +16,10 @@ const SearchScreen = () => {
     const chits = useSelector(state => state.ChitReducer.chits);
     const searchUser = useSelector(state => state.FollowReducer.users);
     const following = useSelector(state => state.FollowReducer.followings);
-    
-    // chits = chits.filter(function(item) {
-    //     return !following.includes(item.user_id); 
-    // })
 
     const filteredArray = chits.filter(function(item) {
             return !following.includes(item.user.user_id); 
-    })
+    });
     
     const [query, setQuery] = useState('');
 

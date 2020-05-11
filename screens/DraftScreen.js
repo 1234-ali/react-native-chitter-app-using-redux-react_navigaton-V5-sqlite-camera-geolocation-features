@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, FlatList, Image, TouchableWithoutFeedback, StatusBar, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableWithoutFeedback, StatusBar, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Input, Item, Button, Icon, Header, Left, Title, Tab, Tabs, TabHeading, Right, Card, CardItem, Body } from 'native-base';
+import { Icon, Header, Title, Card, CardItem, Body } from 'native-base';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
@@ -119,7 +119,7 @@ const DraftScreen = ({ navigation }) => {
                                                 <TouchableOpacity 
                                                     onPress={() => navigation.navigate('updateDraft', { draftId: item.id, draftUserId: user != null && user.user_id, draftTitle: item.title, draftImage: item.imageUri })} 
                                                     activeOpacity={0.6} 
-                                                    style={{...styles.deleteIcon, padding: 8, }} 
+                                                    style={{ ...styles.deleteIcon, padding: 8 }} 
                                                 >
                                                     <Entypo name='edit' size={hp('3%')} color='#026873' />
                                                 </TouchableOpacity>
@@ -153,7 +153,7 @@ const DraftScreen = ({ navigation }) => {
                 <View style={styles.modalView}>
                     <TouchableOpacity onPress={() => {
                         setOpenImage(false);
-                    }} style={{...styles.brushContainer, backgroundColor: '#00acee', marginTop: hp(12), marginBottom: hp(10) }}>
+                    }} style={{ ...styles.brushContainer, backgroundColor: '#00acee', marginTop: hp(12), marginBottom: hp(10) }}>
                         <Ionicons name='ios-close' style={{...styles.brushText, color: 'white', fontSize: hp(6)}} />
                     </TouchableOpacity>
                     <Image source={{ uri: `${modalImage}` }} style={styles.modalbigImage} />

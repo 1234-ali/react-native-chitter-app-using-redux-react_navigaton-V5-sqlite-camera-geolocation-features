@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, TextInput, TouchableWithoutFeedback, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Input, Item, Button, Icon, Header, Left, Title, Tab, Tabs, TabHeading, Right, Card, CardItem, Body } from 'native-base';
+import { Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useSelector, useDispatch } from 'react-redux';
-import * as DraftActions from '../store/actions/DraftActions';
+import * as DraftActions from '../store/actions/DraftActions'; 
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
@@ -150,7 +150,7 @@ const UpdateDraftScreen = ({ navigation, route }) => {
             </View>
             <Modal isVisible={isDrafting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
                     <View style={styles.modalCardView}>
-                        {!isCreated ? 
+                        { !isCreated ? 
                             <ActivityIndicator size='large' color='white' />
                         :
                             <Card style={styles.modalCardContainer}>

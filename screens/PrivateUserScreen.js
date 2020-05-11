@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, Image, RefreshControl, ActivityIndicator, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Image, RefreshControl, ActivityIndicator, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Input, Item, Button, Icon, Header, Left, Title, Tab, Tabs, TabHeading, Right, Card, CardItem, Body } from 'native-base';
+import { Button, Icon, Tab, Tabs, TabHeading } from 'native-base';
 import { useSelector, useDispatch } from 'react-redux';
 import * as UserActions from '../store/actions/UserActions';
 import * as ChitActions from '../store/actions/ChitActions';
@@ -31,7 +31,7 @@ const PrivateUserScreen = ({ navigation, route }) => {
         setError(null);
         setIsRefreshing(true);
         try {
-            await dispatch(UserActions.getUserById(userId))
+            await dispatch(UserActions.getUserById(userId));
             // await dispatch(ChitActions.getChits());
             await dispatch(FollowActions.getFollowersById(userId));
             await dispatch(FollowActions.getFollowingsById(userId));
