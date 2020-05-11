@@ -10,8 +10,8 @@ import * as FollowActions from '../store/actions/FollowActions';
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
-const FollowingScreen = () => {
-    const following = useSelector(state => state.FollowReducer.followings);
+const PrivateFollowingScreen = () => {
+    const following = useSelector(state => state.FollowReducer.privatefollowings);
 
     const dispatch = useDispatch();
 
@@ -78,7 +78,8 @@ const FollowingScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: 'white'
     },
     cardContainer: {
         marginTop: hp(3), 
@@ -147,4 +148,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FollowingScreen;
+export default PrivateFollowingScreen;

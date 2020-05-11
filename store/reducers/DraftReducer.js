@@ -14,25 +14,15 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case SET_DRAFT:
       return {
-        draft: action.draft.map(
-          pl =>
+        draft: action.drafts.map(
+          d1 =>
             new Draft(
-              pl.id.toString(),
-              pl.title,
-              pl.imageUri,
-              pl.date
+              d1.id.toString(),
+              d1.title,
+              d1.imageUri,
+              d1.date
             )
         )
-      };
-    case ADD_DRAFT:
-      const newDraft = new Draft(
-        action.draftData.id.toString(),
-        action.draftData.title,
-        action.draftData.image,
-        action.draftData.date
-      );
-      return {
-        draft: state.draft.concat(newDraft)
       };
     default:
       return state;

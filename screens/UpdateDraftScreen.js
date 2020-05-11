@@ -13,13 +13,13 @@ import * as DraftActions from '../store/actions/DraftActions';
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
-const PostScreen = ({ navigation, route }) => {
+const UpdateDraftScreen = ({ navigation, route }) => {
     const user = useSelector(state => state.UserReducer.user);
 
-    const { userImg } = route.params;
+    const { draftId, draftUserId, draftTitle, draftImage } = route.params;
 
-    const [title, setTitle] = useState('');
-    const [image, setImage] = useState('');
+    const [title, setTitle] = useState(draftTitle);
+    const [image, setImage] = useState(draftImage);
 
     const [isDrafting, setIsDrafting] = useState(false);
     const [isCreated, setIsCreated] = useState(false);
@@ -75,10 +75,10 @@ const PostScreen = ({ navigation, route }) => {
 
     const dispatch = useDispatch();
 
-    const draftSubmission = async () => {
+    const updateDraft = async () => {
         setIsDrafting(true);
         try {
-            await dispatch(DraftActions.addDraft(user != null && (user.user_id).toString(), title, image, new Date().toString()));
+            await dispatch(DraftActions.updateDraft(draftId, draftUserId, title, image, new Date().toString()));
             setIsCreated(true);
         } catch (error) {
             setIsError(true);
@@ -107,16 +107,20 @@ const PostScreen = ({ navigation, route }) => {
                         Post
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={draftSubmission} style={styles.PostContainer}>
+                <TouchableOpacity onPress={updateDraft} style={styles.PostContainer}>
                     <Text style={styles.postText}>
-                        Save Draft
+                        Update Draft
                     </Text>
                 </TouchableOpacity>
                 </View>
             </View>
             <View style={styles.secondContainer}>
                 <View style={{ flexDirection: 'row' }}>
-                    <Image source={{ uri: `${userImg}` }} style={styles.imgFront} />
+                    { user != null && user.hasOwnProperty('user_profile_photo_path') ?
+                        <Image source={{ uri: `${user.user_profile_photo_path}` }} style={styles.imgFront} />
+                    :
+                        <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.imgFront} />
+                    }
                     <TextInput 
                         multiline={true}
                         autoCorrect={false}
@@ -147,26 +151,26 @@ const PostScreen = ({ navigation, route }) => {
             <Modal isVisible={isDrafting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
                     <View style={styles.modalCardView}>
                         {!isCreated ? 
-                                <ActivityIndicator size='large' color='white' />
-                            :
-                                <Card style={styles.modalCardContainer}>
-                                    <CardItem style={styles.modalCardItem}>
-                                        <Body style={styles.modalPortfolio}>
-                                            <Text style={styles.modalPortfolioText}>
-                                                {isError ? 'An Error Occured' : 'Draft Saved'}
+                            <ActivityIndicator size='large' color='white' />
+                        :
+                            <Card style={styles.modalCardContainer}>
+                                <CardItem style={styles.modalCardItem}>
+                                    <Body style={styles.modalPortfolio}>
+                                        <Text style={styles.modalPortfolioText}>
+                                            {isError ? 'An Error Occured' : 'Draft Updated'}
+                                        </Text>
+                                        <TouchableOpacity 
+                                            onPress={isError ? onError : onNavigate}  
+                                            activeOpacity={0.6} 
+                                            style={styles.modalCardButtonContainer}
+                                        >
+                                            <Text style={styles.modalCardButtonText}>
+                                                {isError ? 'Try Again' : 'Go To Main Screen'}
                                             </Text>
-                                            <TouchableOpacity 
-                                                onPress={isError ? onError : onNavigate}  
-                                                activeOpacity={0.6} 
-                                                style={styles.modalCardButtonContainer}
-                                            >
-                                                <Text style={styles.modalCardButtonText}>
-                                                    {isError ? 'Try Again' : 'Go To Main Screen'}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        </Body>
-                                    </CardItem>
-                                </Card>
+                                        </TouchableOpacity>
+                                    </Body>
+                                </CardItem>
+                            </Card>
                         }
                     </View>
                 </Modal>
@@ -314,4 +318,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default PostScreen;
+export default UpdateDraftScreen;

@@ -16,6 +16,10 @@ const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
 const UserProfileScreen = ({ navigation }) => {
+    const user = useSelector(state => state.UserReducer.user);
+    const follower = useSelector(state => state.FollowReducer.followers);
+    const following = useSelector(state => state.FollowReducer.followings);
+
     return (
         <View style={styles.container}>
             <Header style={styles.headerContainer}>
@@ -34,17 +38,17 @@ const UserProfileScreen = ({ navigation }) => {
             </Header>
             <View style={styles.secondContainer}>
                 <View style={styles.imgContainer}>
-                    <Image source={require('../assets/images/person_image.jpg')} style={styles.img} />
+                    <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.img} />
                 </View>
                 <View style={styles.textContainer}>
                     <Text style={styles.text}>
-                        Ali Hassan
+                        { user != null && user.given_name } { user != null && user.family_name }
                     </Text>
                 </View>
-                <View style={{ marginTop: hp(2) }}>
+                <View style={styles.marginTop}>
                     <View style={styles.followerContainer}>
                         <Text style={{ ...styles.followerText, marginRight: 6 }}>
-                            0
+                            { follower.length }
                         </Text>
                         <Text style={styles.followerText}>
                             Followers
@@ -52,7 +56,7 @@ const UserProfileScreen = ({ navigation }) => {
                     </View>
                     <View style={{...styles.followerContainer, marginTop: hp(1), marginBottom: hp(3.5)}}>
                         <Text style={{ ...styles.followerText, marginRight: 6 }}>
-                            0
+                            { following.length }
                         </Text>
                         <Text style={styles.followerText}>
                             Following
@@ -64,9 +68,9 @@ const UserProfileScreen = ({ navigation }) => {
                 <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Followers</Text></TabHeading>}>
                     <FollowerScreen />
                 </Tab>
-                <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Chitters</Text></TabHeading>}>
+                {/* <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Chitters</Text></TabHeading>}>
                     <ChitterScreen />
-                </Tab>
+                </Tab> */}
                 <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Following</Text></TabHeading>}>
                     <FollowingScreen />
                 </Tab>
@@ -129,7 +133,7 @@ const styles = StyleSheet.create({
         marginTop: hp(2.5)
     },
     text: { 
-        fontSize: hp(4.25), 
+        fontSize: hp(3), 
         fontFamily: medium,
         color: 'white' 
     },
@@ -137,7 +141,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     followerText: {
-        fontSize: hp(2.5), 
+        fontSize: hp(2.2), 
         fontFamily: medium, 
         color: 'white' 
     },
@@ -148,6 +152,9 @@ const styles = StyleSheet.create({
         color:'rgba(0 , 0 , 0, .8)',
         fontFamily: medium,
         fontSize: hp(2.3)
+    },
+    marginTop: { 
+        marginTop: hp(2) 
     }
 })
 

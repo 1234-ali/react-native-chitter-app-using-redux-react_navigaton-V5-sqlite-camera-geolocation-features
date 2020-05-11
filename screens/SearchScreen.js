@@ -1,20 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Animated, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Input, Item, Button, Icon, Header, Left, Title, Tab, Tabs, TabHeading, Right, Card, CardItem, Body } from 'native-base';
+import { Input, Button, Icon, Header, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
-import * as UserActions from '../store/actions/UserActions';
-import Autocomplete  from 'react-native-autocomplete-input';
-
+import * as ChitActions from '../store/actions/ChitActions';
+import * as FollowActions from '../store/actions/FollowActions';
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
 const SearchScreen = () => {
+    const user = useSelector(state => state.UserReducer.user);
+    const chits = useSelector(state => state.ChitReducer.chits);
+    const searchUser = useSelector(state => state.FollowReducer.users);
+    const following = useSelector(state => state.FollowReducer.followings);
+    
+    // chits = chits.filter(function(item) {
+    //     return !following.includes(item.user_id); 
+    // })
+
+    const filteredArray = chits.filter(function(item) {
+            return !following.includes(item.user.user_id); 
+    })
+    
+    const [query, setQuery] = useState('');
+
     const [changeView, setChangeView] = useState(false);
+
+    const [isSearching, setIsSearching] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
+    const [error, setError] = useState();
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const [isFollowing, setIsFollowing] = useState([]);
+
+    const dispatch = useDispatch();
+
+    const userChits = useCallback(async () => {
+        setError(null);
+        setIsRefreshing(true);
+        try {
+            await dispatch(ChitActions.getChits());
+        } catch (err) {
+            setError(true);
+        }
+        setIsRefreshing(false);
+    }, [dispatch, setError, setIsRefreshing]);
+
+
+    useEffect(() => {
+        setIsFetching(true);
+        userChits().then(() => {
+            setIsFetching(false);
+        });
+    }, []);
+
+    if (isFetching) {
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator size='large' color='#027373' />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.centered}>
+                <Text>An error occurred!</Text>
+                <Button 
+                    title='Try again' 
+                    onPress={userChits}
+                    color='#020F59'
+                />
+            </View>
+        );
+    }
+
+    const userSearch = async (text) => {
+        setQuery(text);
+
+        if (query.length > 5) {
+            setIsSearching(true);
+            try {
+                await dispatch(FollowActions.userSearch(text));
+            } catch (error) {
+                // Alert.alert(error.message);
+            }
+            setIsSearching(false);
+        }
+    };
+
+    const followUser = async (id) => {
+        try {
+            await dispatch(FollowActions.followUser(id));
+        } catch (error) {
+            Alert.alert(error.message);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -23,7 +108,11 @@ const SearchScreen = () => {
                 { !changeView ?   
                     <View style={styles.flexDirection}>
                         <View>
-                            <Image source={require('../assets/images/person_image.jpg')} style={styles.imgFront} />
+                            { user != null && user.hasOwnProperty('user_profile_photo_path') ?
+                                <Image source={{ uri: `${user.user_profile_photo_path}` }} style={styles.imgFront} />
+                            :
+                                <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.imgFront} />
+                            }
                         </View>
                         <TouchableOpacity onPress={() => setChangeView(true)} style={styles.inputContainer}>
                             <Input 
@@ -37,7 +126,7 @@ const SearchScreen = () => {
                     </View>
                 :
                     <View style={styles.flexDirection}>
-                        <TouchableOpacity onPress={() => setChangeView(false)} style={{ marginRight: 10 }}> 
+                        <TouchableOpacity onPress={() => setChangeView(false)} style={styles.margin}> 
                             <Icon name='arrow-back' style={styles.backIcon} />
                         </TouchableOpacity>
                         <View style={{ ...styles.flexDirection, width: wp(85) }}>
@@ -45,10 +134,14 @@ const SearchScreen = () => {
                                 autoCorrect={false}
                                 autoFocus
                                 style={styles.liveSearchInput}
+                                value={query}
+                                onChangeText={(text) => userSearch(text)}
                             />
-                            <TouchableOpacity style={{...styles.brushContainer, marginTop: hp(0) }}>
-                                <Ionicons name='ios-close' style={styles.brushText} />
-                            </TouchableOpacity>
+                            { query.length > 0 &&
+                                <TouchableOpacity onPress={() => setQuery('')} style={{...styles.brushContainer, marginTop: hp(0) }}>
+                                    <Ionicons name='ios-close' style={styles.brushText} />
+                                </TouchableOpacity>
+                            }
                         </View>
                     </View>
                 }
@@ -63,58 +156,110 @@ const SearchScreen = () => {
                                         Suggestions ?
                                     </Text>
                                     <View style={styles.secondView}>
-                                        <Card style={styles.secondViewCard}>
-                                            <CardItem>
-                                                <Body>
-                                                    <View style={styles.innerView}>
-                                                        <Image source={require('../assets/images/person_image.jpg')} style={styles.userImgFront} />
-                                                        <View style={styles.innerViewSecond}>
-                                                            <Text style={styles.innerViewText}>
-                                                                {'Ali Hassan6879'.substring(0, 10)}
-                                                            </Text>
-                                                            <Text style={styles.innerViewTag}>
-                                                                @Alih12
-                                                            </Text>
-                                                        </View>
-                                                        <TouchableOpacity style={styles.followContainer}>
-                                                            <Text style={styles.followText}>
-                                                                Follow
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                    <Text style={styles.paragraph}>
-                                                        Lorem sunt dolore minim Lorem occaecat voluptate nisi esse e Lorem sunt dolore minim Lorem occaecat voluptate nisi esse enim cillum aute aliqua.
-                                                    </Text>
-                                                </Body>
-                                            </CardItem>
-                                        </Card>
+                                        { chits.length === 0 ?
+                                            <Card style={styles.noCardContainer}>
+                                                <CardItem>
+                                                    <Body style={styles.alignItems}>
+                                                        <Text style={styles.fontFamily}>
+                                                            No Suggestions !
+                                                        </Text>
+                                                    </Body>
+                                                </CardItem>
+                                            </Card>
+                                        :
+                                            <FlatList 
+                                                onRefresh={userChits}
+                                                refreshing={isRefreshing}
+                                                data={filteredArray}
+                                                keyExtractor={item => (item.chit_id).toString()} 
+                                                showsVerticalScrollIndicator={false}
+                                                renderItem={({ item, index }) => {
+                                                    return (
+
+                                                    <Card style={styles.secondViewCard}>
+                                                            <CardItem>
+                                                                <Body>
+                                                                    <View style={styles.innerView}>
+                                                                        <Image source={require('../assets/images/person_image.jpg')} style={styles.userImgFront} />
+                                                                        <View style={styles.innerViewSecond}>
+                                                                            <Text style={styles.innerViewText}>
+                                                                                {  item.user.given_name }
+                                                                            </Text>
+                                                                            <Text style={styles.innerViewTag}>
+                                                                                { item.user.email.substring(0, 7) }
+                                                                            </Text>
+                                                                        </View>
+                                                                        <TouchableOpacity onPress={() => followUser(item.user.user_id)} style={styles.followContainer}>
+                                                                            { isFollowing ? 
+                                                                                <Text style={styles.followText}>
+                                                                                    Follow
+                                                                                </Text>
+                                                                            : 
+                                                                                <ActivityIndicator size='small' color='white' />
+                                                                            }
+                                                                        </TouchableOpacity>
+                                                                    </View>
+                                                                </Body>
+                                                            </CardItem>
+                                                        </Card>
+                                                    )
+                                                }} 
+                                            />
+                                        }
                                     </View>
                                 </View>
                             </Body>
                         </CardItem>
                     </Card>
                 </View>
-            :
+            :  
                 <View style={{...styles.container, backgroundColor: '#F0F0F0' }}>
-                    <View style={{marginTop: hp(5) }}>
-                        <Card style={{ width: wp(98), alignSelf: 'center', elevation: 5}}>
-                            <CardItem>
-                                <Body>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Image source={require('../assets/images/person_image.jpg')} style={styles.userSearchImgFront} />
-                                        <View style={{ marginLeft: hp(1) }}>
-                                            <Text style={{...styles.innerViewText, marginTop: hp(-.2) }}>
-                                                {'Ali Hassan6879'.substring(0, 10)}
+                    { isSearching ? 
+                        <View style={styles.centered}>
+                            <ActivityIndicator size='large' color='#027373' />
+                        </View>
+                    :
+                        <View style={styles.liveSearchView}>
+                            { searchUser.length === 0 ?
+                                <Card style={styles.noCardContainer}>
+                                    <CardItem>
+                                        <Body style={styles.alignItems}>
+                                            <Text style={styles.fontFamily}>
+                                                Search Users !
                                             </Text>
-                                            <Text style={{...styles.innerViewTag,fontSize: 16, marginTop: hp(-.01), color: 'rgba(0 , 0, 0, .8)' }}>
-                                                @Alih12
-                                            </Text>
-                                        </View>
-                                    </View>
-                                </Body>
-                            </CardItem>
-                        </Card>
-                    </View>
+                                        </Body>
+                                    </CardItem>
+                                </Card>
+                            :
+                                <FlatList 
+                                    data={searchUser}
+                                    keyExtractor={item => (item.user_id).toString()} 
+                                    showsVerticalScrollIndicator={false}
+                                    renderItem={({ item }) => {
+                                        return (
+                                            <Card style={styles.liveSearchCard}>
+                                                <CardItem>
+                                                    <Body>
+                                                        <View style={styles.flexDirection}>
+                                                            <Image source={require('../assets/images/person_image.jpg')} style={styles.userSearchImgFront} />
+                                                            <View style={styles.marginLeft}>
+                                                                <Text style={{ ...styles.innerViewText, fontSize: hp(2.7), marginTop: hp(-.2) }}>
+                                                                    { item.given_name }
+                                                                </Text>
+                                                                <Text style={{...styles.innerViewTag, fontSize: 18, marginTop: hp(-.1),  color: 'rgba(0 , 0, 0, .8)' }}>
+                                                                    { item.email.substring(0, 7) }
+                                                                </Text>
+                                                            </View>
+                                                        </View>
+                                                    </Body>
+                                                </CardItem>
+                                            </Card>
+                                        )
+                                    }}
+                                />
+                            }
+                        </View>
+                    }
                 </View>
             }
         </View>
@@ -141,7 +286,7 @@ const styles = StyleSheet.create({
     },
     waterIcon: { 
         marginLeft: wp(5), 
-        fontSize: hp(3.1), 
+        fontSize: hp(3.1),  
         color: 'blue', 
         marginTop: hp(.5) 
     },
@@ -190,6 +335,9 @@ const styles = StyleSheet.create({
     mainCardView: { 
         width: wp(90) 
     },
+    marginLeft: { 
+        marginLeft: hp(1) 
+    },
     suggestionText: { 
         fontSize: hp(4), 
         fontFamily: book 
@@ -211,12 +359,12 @@ const styles = StyleSheet.create({
         marginLeft: wp(-3) 
     },
     innerViewText: { 
-        fontSize: hp(3.2), 
+        fontSize: hp(2.6), 
         fontFamily: medium 
     },
     userImgFront: {
-        width: 60,
-        height: 60,
+        width: 54,
+        height: 54,
         borderRadius: 30,
         borderColor: 'rgba(0, 0, 0, .4)',
         borderWidth: wp(.5),
@@ -229,22 +377,22 @@ const styles = StyleSheet.create({
     innerViewTag: { 
         fontFamily: book, 
         marginTop: hp(.7), 
-        fontSize: hp(2.7), 
+        fontSize: hp(2.5), 
         marginTop: hp(.6) 
     },
     followContainer: { 
         backgroundColor: '#00acee',
         alignItems: 'center', 
         justifyContent: 'center',
-        paddingHorizontal: 15,
+        paddingHorizontal: 12,
         height: 35,
         borderRadius: 5,
-        marginLeft: wp(12),
+        marginLeft: wp(11),
         marginTop: hp(-.2),
     },
     followText: { 
         color: 'white', 
-        fontSize: hp(3), 
+        fontSize: hp(2.5), 
         fontFamily: medium 
     },
     paragraph: { 
@@ -258,7 +406,35 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(0, 0, 0, .4)',
         borderWidth: wp(.5),
         marginLeft: wp(2)
-    }
+    },
+    liveSearchView: {
+        marginTop: hp(5) 
+    },
+    liveSearchCard: { 
+        width: wp(98), 
+        alignSelf: 'center', 
+        elevation: 5
+    },
+    margin: { 
+        marginRight: 10 
+    },
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    noCardContainer: { 
+        marginTop: hp(1.5), 
+        width: wp('97%'), 
+        alignSelf: 'center', 
+        elevation: 5 
+    },
+    alignItems: {  
+        alignItems: 'center' 
+    },
+    fontFamily: { 
+        fontFamily: medium 
+    },
 })
 
 export default SearchScreen;

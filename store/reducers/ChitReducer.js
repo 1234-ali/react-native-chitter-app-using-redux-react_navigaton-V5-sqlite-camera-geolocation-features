@@ -11,8 +11,7 @@
   const initialState = {
     profile: null,
     chits: [],
-    loading: true,
-    error: ''
+    loading: true
   };
   
   export default function(state = initialState, action) {

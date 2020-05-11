@@ -5,13 +5,13 @@ import {
   SET_DRAFT
 } from './types';
 
-import { insertDraft, fetchDraft } from '../../helpers/db';
+import { insertDraft, fetchDraft, dropDraft, draftUpdated } from '../../helpers/db';
 
 
-export const addDraft = (title, image, date) => {
+export const addDraft = (userId, title, image, date) => {
   return async dispatch => {
     const fileName = image.split('/').pop();
-    const newPath =  RNFS.DocumentDirectoryPath + '/' + fileName;
+    const newPath =  "file://" + RNFS.DocumentDirectoryPath + '/' + fileName;
 
     try {
       await RNFS.copyFile(
@@ -20,20 +20,13 @@ export const addDraft = (title, image, date) => {
       );
       
       const dbResult = await insertDraft(
+        userId,
         title,
         newPath,
         date
       );
+
       console.log(dbResult);
-      dispatch({
-        type: ADD_DRAFT,
-        draftData: {
-          id: dbResult.insertId,
-          title: title,
-          image: newPath,
-          date: date
-        }
-      });
     } catch (err) {
       console.log(err);
       throw err;
@@ -41,14 +34,54 @@ export const addDraft = (title, image, date) => {
   };
 };
 
-export const loadDraft = () => {
+export const loadDraft = (userId) => {
   return async dispatch => {
     try {
-      const dbResult = await fetchDraft();
-      console.log(dbResult);
-      dispatch({ type: SET_DRAFT, places: dbResult.rows._array });
+      const dbResult = await fetchDraft(userId);
+      // console.log(dbResult);
+      dispatch({ type: SET_DRAFT, drafts: dbResult });
     } catch (err) {
       throw err
+    }
+  };
+};
+
+export const deleteDraft = (id) => {
+  return async dispatch => {
+    try {
+      const dbResult = await dropDraft(id);
+      
+      console.log(dbResult);
+      loadDraft();
+      // dispatch({ type: SET_DRAFT, drafts: dbResult });
+    } catch (err) {
+      throw err
+    }
+  };
+};
+
+export const updateDraft = (id, userId, title, image, date) => {
+  return async dispatch => {
+    const fileName = image.split('/').pop();
+    const newPath =  "file://" + RNFS.DocumentDirectoryPath + '/' + fileName;
+
+    try {
+      await RNFS.copyFile(
+          image,
+          newPath
+      );
+      
+      const dbResult = await draftUpdated(
+        id,
+        userId,
+        title,
+        newPath,
+        date
+      );
+
+      console.log(dbResult);
+    } catch (err) {
+      throw err;
     }
   };
 };

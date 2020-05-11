@@ -25,6 +25,8 @@ import SearchScreen from '../screens/SearchScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
 import DraftScreen from '../screens/DraftScreen';
 import PostScreen from '../screens/PostScreen';
+import UpdateDraftScreen from '../screens/UpdateDraftScreen';
+import PrivateUserScreen from '../screens/PrivateUserScreen';
 
 import CustomDrawerContent from '../components/CustomDrawerContent';
 
@@ -115,10 +117,10 @@ const ChitterNavigator = () => {
                     <>
                         <Stack.Screen name="drawer" component={MyDrawer} />
                         <Stack.Screen name="post" component={PostScreen} />
+                        <Stack.Screen name="updateDraft" component={UpdateDraftScreen} />
+                        <Stack.Screen name="privateUser" component={PrivateUserScreen} />
                     </>
                 }
-                
-                
             </Stack.Navigator>
         </NavigationContainer>
     );

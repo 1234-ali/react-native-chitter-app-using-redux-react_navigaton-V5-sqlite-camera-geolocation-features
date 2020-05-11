@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Animated, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Input, Item, Button, Icon, Header, Left, Title, Tab, Tabs, TabHeading, Right, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
@@ -7,6 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import * as ChitActions from '../store/actions/ChitActions';
+import * as FollowActions from '../store/actions/FollowActions';
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
@@ -28,6 +29,8 @@ const HomeScreen = ({ navigation }) => {
         setIsRefreshing(true);
         try {
             await dispatch(ChitActions.getChits());
+            await dispatch(FollowActions.getFollowers());
+            await dispatch(FollowActions.getFollowings());
         } catch (err) {
             setError(true);
         }
@@ -68,7 +71,7 @@ const HomeScreen = ({ navigation }) => {
             <Header style={styles.headerContainer}>
                 <StatusBar barStyle="dark-content" backgroundColor="white" /> 
                 <View>
-                    { user.hasOwnProperty('user_profile_photo_path') ?
+                    { user != null && user.hasOwnProperty('user_profile_photo_path') ?
                         <Image source={{ uri: `${user.user_profile_photo_path}` }} style={styles.imgFront} />
                     :
                         <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.imgFront} />
@@ -77,7 +80,7 @@ const HomeScreen = ({ navigation }) => {
                 <View>
                     <Title style={styles.header}>Home</Title>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate('post')} style={styles.brushContainer}>
+                <TouchableOpacity onPress={() => navigation.navigate('post', { userImg: user != null && user.hasOwnProperty('user_profile_photo_path') ? user.user_profile_photo_path : 'http://www.gravatar.com/avatar/?d=mm' }) } style={styles.brushContainer}>
                     <Ionicons name='ios-brush' style={styles.brushText} />
                 </TouchableOpacity>
             </Header>
@@ -93,53 +96,58 @@ const HomeScreen = ({ navigation }) => {
                             </CardItem>
                         </Card>
                     :
-                    <FlatList 
-                    onRefresh={userChits}
-                    refreshing={isRefreshing}
-                    data={chits}
-                    keyExtractor={item => (item.chit_id).toString()} 
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => {
-                        return (
-                            <Card>
-                                <CardItem>
-                                    <Body>
-                                        <View style={styles.cardViewContainer}>
-                                            { item.user.hasOwnProperty('user_profile_photo_path') ?
-                                                <Image source={{ uri: `${item.user.user_profile_photo_path}` }} style={styles.userImg} />
-                                            :
-                                                <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImg} />
-                                            }
+                        <FlatList 
+                            onRefresh={userChits}
+                            refreshing={isRefreshing}
+                            data={chits}
+                            keyExtractor={item => (item.chit_id).toString()} 
+                            showsVerticalScrollIndicator={false}
+                            renderItem={({ item }) => {
+                                return (
+                                    <TouchableOpacity  
+                                        activeOpacity={0.7} 
+                                        onPress={() => navigation.navigate('privateUser', { userId: item.user.user_id })}
+                                    >
+                                        <Card>
+                                            <CardItem>
+                                                <Body>
+                                                    <View style={styles.cardViewContainer}>
+                                                        { item.user.hasOwnProperty('user_profile_photo_path') ?
+                                                            <Image source={{ uri: `${item.user.user_profile_photo_path}` }} style={styles.userImg} />
+                                                        :
+                                                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImg} />
+                                                        }
 
-                                            <View style={styles.textViewContainer}>
-                                                <Text style={styles.userText}>
-                                                    {item.user.given_name} {item.user.Family_name}
-                                                </Text>
-                                                <Text style={styles.hashTagText}>
-                                                    @Alih12
-                                                </Text>
-                                            </View>
-                                            <Text style={styles.timeText}>
-                                                {moment.utc(item.timestamp).local().startOf('seconds').fromNow()}
-                                            </Text>
-                                        </View>
-                                        <View>
-                                            <Text style={styles.chitContent}>
-                                                {item.chit_content}
-                                            </Text>
-                                            { item.hasOwnProperty('chittr_chit_photo') && 
-                                                <TouchableOpacity onPress={() => setOpenImage(true)} style={styles.bigImageContainer}>
-                                                    <Image  source={{ uri: `${item.chittr_chit_photo.photo_path}` }} style={styles.bigImage} />
-                                                </TouchableOpacity>
-                                            }
-                                        </View>
-                                    </Body>
-                                </CardItem>
-                            </Card>
-                        )
-                    }}
-                />
-            }
+                                                        <View style={styles.textViewContainer}>
+                                                            <Text style={styles.userText}>
+                                                                {item.user.given_name} {item.user.Family_name}
+                                                            </Text>
+                                                            <Text style={styles.hashTagText}>
+                                                                @Alih12
+                                                            </Text>
+                                                        </View>
+                                                        <Text style={styles.timeText}>
+                                                            {moment.utc(item.timestamp).local().startOf('seconds').fromNow()}
+                                                        </Text>
+                                                    </View>
+                                                    <View>
+                                                        <Text style={styles.chitContent}>
+                                                            {item.chit_content}
+                                                        </Text>
+                                                        { item.hasOwnProperty('chittr_chit_photo') && 
+                                                            <TouchableOpacity onPress={() => setOpenImage(true)} style={styles.bigImageContainer}>
+                                                                <Image  source={{ uri: `${item.chittr_chit_photo.photo_path}` }} style={styles.bigImage} />
+                                                            </TouchableOpacity>
+                                                        }
+                                                    </View>
+                                                </Body>
+                                            </CardItem>
+                                        </Card>
+                                    </TouchableOpacity>
+                                )
+                            }}
+                    />
+                }
             </View>
             <Modal isVisible={openImage}  style={styles.modalContainer} >
                 <View style={styles.modalView}>
@@ -209,7 +217,7 @@ const styles = StyleSheet.create({
         width: wp('50%') 
     },
     userText: { 
-        fontSize: hp(3), 
+        fontSize: hp(2.5), 
         fontFamily: medium 
     },
     hashTagText: { 
@@ -220,7 +228,6 @@ const styles = StyleSheet.create({
     timeText: { 
         fontSize: hp(2), 
         fontFamily: medium, 
-        marginTop: hp(.6) 
     },
     chitContent: { 
         marginLeft: wp(.5), 

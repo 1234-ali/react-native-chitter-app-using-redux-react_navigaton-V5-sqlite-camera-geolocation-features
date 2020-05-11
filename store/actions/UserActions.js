@@ -1,16 +1,11 @@
 import axios from 'axios';
 import {
   REGISTER_SUCCESS,
-  REGISTER_FAIL,
   USER_LOADED,
   AUTH_ERROR,
   LOGIN_SUCCESS,
-  LOGIN_FAIL,
+  USER_ID_LOADED,
   LOGOUT,
-  RESET_FAIL,
-  RESET_SUCCESS,
-  RESET_USER,
-  VERIFY_USER
 } from './types';
 
 import URL from './Url';
@@ -18,152 +13,7 @@ import URL from './Url';
 import setAuthToken from '../../utils/setAuthToken';
 import AsyncStorage from '@react-native-community/async-storage';
 
-
-
-// export const username = (username) => async dispatch => {
-//   const token = await AsyncStorage.getItem('token');
-//   if (token) {
-//     setAuthToken(token);
-//   }
-
-//   const config = {
-//     headers: {
-//       'Content-Type': 'application/json'
-//     }
-//   };
-
-//   const body = JSON.stringify({ username });
-
-//   try {
-//     await axios.put(`${URL}/api/users/username`, body, config);
-
-//     dispatch(loadUser());
-//   } catch (err) {
-//     const errors = err.response.data.errors;
-
-//     console.log(errors);
-//   }
-// };
-
-export const avatar = (avatar) => async dispatch => {
-  const token = await AsyncStorage.getItem('token');
-  if (token) {
-    setAuthToken(token);
-  }
-  
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
-
-  const body = JSON.stringify({ avatar });
-
-  try {
-    await axios.put(`${URL}/api/users/avatar`, body, config);
-
-    dispatch(loadUser());
-  } catch (err) {
-      const errors = err.response.data.errors;
-
-      console.log(errors);
-  }
-};
-
-// export const resetPassword = (email) => async dispatch => {
-
-//   const config = {
-//     headers: {
-//       'Content-Type': 'application/json'
-//     }
-//   };
-
-//   const body = JSON.stringify({ email });
-
-//   try {
-//     const res = await axios.post(`${URL}/api/auth/resetPassword`, body, config);
-
-//     dispatch({
-//       type: RESET_SUCCESS,
-//       payload: res.data.msg
-//     });
-//   } catch (err) {
-//       const errors = err.response.data.errors;
-//       dispatch({
-//         type: RESET_FAIL,
-//         payload: errors[0].msg
-//       });
-//   }
-// };
-
-// export const resetPasswordCode = (code) => async dispatch => {
-
-//   try {
-//     const res = await axios.post(`${URL}/api/auth/resetPasswordCode/${code}`);
-
-//     dispatch({
-//       type: RESET_USER,
-//       payload: res.data
-//     });
-//   } catch (err) {
-//       const errors = err.response.data.errors;
-//       dispatch({
-//         type: RESET_FAIL,
-//         payload: errors[0].msg
-//       });
-//   }
-// };
-
-// export const verifyCode = (code) => async dispatch => {
-
-//   try {
-//     const res = await axios.post(`${URL}/api/users/verifyEmail/${code}`);
-
-//     dispatch({
-//       type: VERIFY_USER,
-//       payload: res.data.msg
-//     });
-//   } catch (err) {
-//       const errors = err.response.data.errors;
-//       dispatch({
-//         type: RESET_FAIL,
-//         payload: errors[0].msg
-//       });
-//   }
-// };
-
-// export const changePassword = (userId, password) => async dispatch => {
-
-//   const config = {
-//     headers: {
-//       'Content-Type': 'application/json'
-//     }
-//   };
-
-//   const body = JSON.stringify({ userId, password });
-
-//   try {
-//     const res = await axios.put(`${URL}/api/auth/changePassword`, body, config);
-
-//     dispatch({
-//       type: RESET_SUCCESS,
-//       payload: res.data.msg
-//     });
-//   } catch (err) {
-//       const errors = err.response.data.errors;
-
-//       dispatch({
-//         type: RESET_FAIL,
-//         payload: errors[0].msg
-//       });
-//   }
-// };
-
 export const loadUser = () => async dispatch => {
-  const token = await AsyncStorage.getItem('token');
-  if (token) {
-    setAuthToken(token);
-  }
 
   const item = await AsyncStorage.getItem('id');
 
@@ -182,6 +32,54 @@ export const loadUser = () => async dispatch => {
       payload: err
     });
   }
+};
+
+export const getUserById = (id) => async dispatch => {
+
+  try {
+    const res = await axios.get(`${URL}/user/${id}`);
+
+    dispatch({
+      type: USER_ID_LOADED,
+      payload: res.data
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const uploadImage = (image) => async dispatch => {
+  const token = await AsyncStorage.getItem('token');
+  if (token) {
+    setAuthToken(token);
+  }
+  
+  const photo = {
+    uri: image.uri,
+    type: image.type,
+    name: image.fileName,
+  };
+
+  const form = new FormData();
+
+  form.append("test", photo);
+
+  axios.post(
+    `${URL}/user/photo`,
+    {
+      body: form,
+      headers: {
+        'accept' : 'application/json',
+        'Content-Type': 'image/jpeg',
+      }
+    }
+  )
+  .then((responseData) => {
+    console.log("Success")
+  })
+  .catch((error) => {
+    console.log("ERROR ")
+  });
 };
 
 export const register = (given_name, family_name, email, password) => async dispatch => {
@@ -218,8 +116,6 @@ export const login = (email, password) => async dispatch => {
   try {
     const res = await axios.post(`${URL}/login`, body, config);
 
-    console.log(res.data)
-
     dispatch({
       type: LOGIN_SUCCESS,
       payload: res.data
@@ -234,18 +130,9 @@ export const login = (email, password) => async dispatch => {
 };
 
 export const logout = () => async dispatch => {
-  const token = await AsyncStorage.getItem('token');
-  if (token) {
-    setAuthToken(token);
-  }
-
   try {
-    await axios.post(`${URL}/logout`);
-
     dispatch({ type: LOGOUT });
   } catch (err) {
-    console.log(err);
     throw err;
-    
   }
 };

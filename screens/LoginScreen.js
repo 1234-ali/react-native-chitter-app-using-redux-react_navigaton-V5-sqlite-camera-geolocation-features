@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Animated, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Animated, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Input, Item, Button, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
@@ -61,14 +61,19 @@ const LoginScreen = ({ navigation }) => {
         }
     };
 
+    const message = () => {
+        navigation.navigate('home');
+    };
+
 
     return (
          <View style={styles.container}>
+             <StatusBar barStyle="dark-content" backgroundColor="white" />
              { isMessage && token.msg != '' && message() }
              <KeyboardAvoidingView behavior='position'>
-                {/* <View style={{ height: 150, marginTop: hp(5) }}>
-                    <Image source={require('../assets/images/book.jpg')} style={{ height: null, flex: 1 }} />
-                </View> */}
+                <View style={{ height: 150, width: 150, marginTop: hp(5), alignSelf: 'center' }}>
+                    <Image source={require('../assets/images/logo5.jpg')} style={{ height: null, width: null, flex: 1 }} />
+                </View>
                 <Card style={styles.cardContainer}>
                     <CardItem style={styles.cardItem}>
                         <Body style={styles.cardBody}>
@@ -101,16 +106,16 @@ const LoginScreen = ({ navigation }) => {
                                 }   
                             </Item>
                             <Animated.View style={{ opacity: fadeAnim }}>
-                                <Button onPress={onSubmit} rounded success style={styles.buttonContainer}>
+                                <Button onPress={onSubmit} rounded success style={{...styles.buttonContainer, marginBottom: hp(2) }}>
                                     <Text  style={styles.buttonText}>Login</Text>
                                 </Button>
                             </Animated.View>
-                            <TouchableOpacity onPress={() => navigation.navigate('forgetPassword')} style={styles.forgetButtonContainer}>
+                            {/* <TouchableOpacity onPress={() => navigation.navigate('forgetPassword')} style={styles.forgetButtonContainer}>
                                 <Text style={styles.forgetButtonText}>
                                     Forget Password
                                 </Text>
                                 <AntDesign name="questioncircleo" size={hp(2)} color='#5C257F' style={styles.forgetButtonIcon} />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </Body>
                     </CardItem>
                 </Card>
@@ -146,7 +151,7 @@ const styles = StyleSheet.create({
         backgroundColor:  '#F0F0F0',  
         justifyContent: 'center', 
         elevation: 8,  
-        marginTop: hp('5%') 
+        marginTop: hp('4%') 
     },
     cardItem: { 
         backgroundColor:  '#F0F0F0' 
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
     },
     signupContainer: { 
         flexDirection: 'row',  
-        marginTop: hp(20) 
+        marginTop: hp(24) 
     },
     createText: { 
         fontSize : hp(2.2), 

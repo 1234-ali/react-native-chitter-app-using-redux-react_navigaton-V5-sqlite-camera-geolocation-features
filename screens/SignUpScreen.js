@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView, Animated, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView, Animated, TouchableOpacity, Image, ScrollView, Alert, StatusBar, ActivityIndicator } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Input, Item, Button, Card, CardItem, Body } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
@@ -75,104 +75,107 @@ const SignUpScreen = ({ navigation }) => {
     };
 
     return (
-         <View style={styles.container}>
-            { isError && token.error != '' && error(token.error) }
-            { isMessage && token.msg != '' && message(token.msg) }
-            <KeyboardAvoidingView behavior='position'>
-                {/* <View style={{ height: 150, marginTop: hp(5) }}>
-                    <Image source={require('../assets/images/book.jpg')} style={{ height: null, flex: 1 }} />
-                </View> */}
-                <Card style={styles.cardContainer}>
-                    <CardItem style={styles.cardItem}>
-                        <Body style={styles.cardBody}>
-                            <Text style={styles.loginText}>
-                                Sign Up
-                            </Text>
-                            <Item rounded style={styles.itemContainer}>
-                                <Input 
-                                    placeholder='First Name' 
-                                    autoCorrect={false} 
-                                    keyboardType='default'
-                                    style={styles.itemText}
-                                    value={firstName}
-                                    onChangeText={(text) => setFirstName(text)}
-                                />
-                            </Item>
-                            <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
-                                <Input 
-                                    placeholder='Last Name' 
-                                    autoCorrect={false} 
-                                    keyboardType='default' 
-                                    style={styles.itemText}
-                                    value={lastName}
-                                    onChangeText={(text) => setLastName(text)}
-                                />
-                            </Item>
-                            <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
-                                <Input 
-                                    placeholder='Email' 
-                                    autoCorrect={false} 
-                                    keyboardType='email-address' 
-                                    style={styles.itemText}
-                                    value={email}
-                                    onChangeText={(text) => setEmail(text)}
-                                />
-                            </Item>
-                            <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
-                                <Input 
-                                    placeholder='Password' 
-                                    autoCorrect={false} 
-                                    secureTextEntry={hidePassword} 
-                                    style={styles.itemText} 
-                                    value={password}
-                                    onChangeText={(text) => setPassword(text)}
-                                />
-                                { hidePassword ? 
-                                    <Feather name='eye' size={hp('2.5%')} color='#3A403D' onPress={() => setHidePassword(false)} style={styles.hideIcon} />
-                                :   
-                                    <Feather name='eye-off' size={hp('2.5%')} color='#3A403D' onPress={() => setHidePassword(true)} style={styles.hideIcon} />
-                                }   
-                            </Item>
-                            <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
-                                <Input 
-                                    placeholder='Confirm Password' 
-                                    autoCorrect={false} 
-                                    secureTextEntry={hideRePassword} 
-                                    style={styles.itemText} 
-                                    value={rePassword}
-                                    onChangeText={(text) => setRePassword(text)}
-                                />
-                                { hideRePassword ? 
-                                    <Feather name='eye' size={hp('2.5%')} color='#3A403D' onPress={() => setHideRePassword(false)} style={styles.hideIcon} />
-                                :   
-                                    <Feather name='eye-off' size={hp('2.5%')} color='#3A403D' onPress={() => setHideRePassword(true)} style={styles.hideIcon} />
-                                }   
-                            </Item>
-                            <Animated.View style={{ opacity: fadeAnim }}>
-                                <Button onPress={onSubmit} rounded success style={styles.buttonContainer}>
-                                    <Text  style={styles.buttonText}>Sign Up</Text>
-                                </Button>
-                            </Animated.View>
-                        </Body>
-                    </CardItem>
-                </Card>
-            </KeyboardAvoidingView>
-            <View style={styles.signupContainer}> 
-                <Text style={styles.createText}>
-                    Already have an account ? 
-                </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('login')}>
-                    <Text style={styles.signupText}>
-                        Login
+        <ScrollView style={{ flex: 1 }}>
+            <StatusBar barStyle="dark-content" backgroundColor="white" />
+            <View style={styles.container}>
+                { isError && token.error != '' && error(token.error) }
+                { isMessage && token.msg != '' && message(token.msg) }
+                <KeyboardAvoidingView behavior='position'>
+                    <View style={{ height: 150, width: 150, marginTop: hp(5), alignSelf: 'center' }}>
+                        <Image source={require('../assets/images/logo5.jpg')} style={{ height: null, width: null, flex: 1 }} />
+                    </View>
+                    <Card style={styles.cardContainer}>
+                        <CardItem style={styles.cardItem}>
+                            <Body style={styles.cardBody}>
+                                <Text style={styles.loginText}>
+                                    Sign Up
+                                </Text>
+                                <Item rounded style={styles.itemContainer}>
+                                    <Input 
+                                        placeholder='First Name' 
+                                        autoCorrect={false} 
+                                        keyboardType='default'
+                                        style={styles.itemText}
+                                        value={firstName}
+                                        onChangeText={(text) => setFirstName(text)}
+                                    />
+                                </Item>
+                                <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
+                                    <Input 
+                                        placeholder='Last Name' 
+                                        autoCorrect={false} 
+                                        keyboardType='default' 
+                                        style={styles.itemText}
+                                        value={lastName}
+                                        onChangeText={(text) => setLastName(text)}
+                                    />
+                                </Item>
+                                <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
+                                    <Input 
+                                        placeholder='Email' 
+                                        autoCorrect={false} 
+                                        keyboardType='email-address' 
+                                        style={styles.itemText}
+                                        value={email}
+                                        onChangeText={(text) => setEmail(text)}
+                                    />
+                                </Item>
+                                <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
+                                    <Input 
+                                        placeholder='Password' 
+                                        autoCorrect={false} 
+                                        secureTextEntry={hidePassword} 
+                                        style={styles.itemText} 
+                                        value={password}
+                                        onChangeText={(text) => setPassword(text)}
+                                    />
+                                    { hidePassword ? 
+                                        <Feather name='eye' size={hp('2.5%')} color='#3A403D' onPress={() => setHidePassword(false)} style={styles.hideIcon} />
+                                    :   
+                                        <Feather name='eye-off' size={hp('2.5%')} color='#3A403D' onPress={() => setHidePassword(true)} style={styles.hideIcon} />
+                                    }   
+                                </Item>
+                                <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
+                                    <Input 
+                                        placeholder='Confirm Password' 
+                                        autoCorrect={false} 
+                                        secureTextEntry={hideRePassword} 
+                                        style={styles.itemText} 
+                                        value={rePassword}
+                                        onChangeText={(text) => setRePassword(text)}
+                                    />
+                                    { hideRePassword ? 
+                                        <Feather name='eye' size={hp('2.5%')} color='#3A403D' onPress={() => setHideRePassword(false)} style={styles.hideIcon} />
+                                    :   
+                                        <Feather name='eye-off' size={hp('2.5%')} color='#3A403D' onPress={() => setHideRePassword(true)} style={styles.hideIcon} />
+                                    }   
+                                </Item>
+                                <Animated.View style={{ opacity: fadeAnim }}>
+                                    <Button onPress={onSubmit} rounded success style={styles.buttonContainer}>
+                                        <Text  style={styles.buttonText}>Sign Up</Text>
+                                    </Button>
+                                </Animated.View>
+                            </Body>
+                        </CardItem>
+                    </Card>
+                </KeyboardAvoidingView>
+                <View style={styles.signupContainer}> 
+                    <Text style={styles.createText}>
+                        Already have an account ? 
                     </Text>
-                </TouchableOpacity>
-            </View>
-            <Modal isVisible={isFetching}>
-                <View style={styles.indicator}>
-                    <ActivityIndicator size='large' color='white' />
+                    <TouchableOpacity onPress={() => navigation.navigate('login')}>
+                        <Text style={styles.signupText}>
+                            Login
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-            </Modal> 
-        </View>
+                <Modal isVisible={isFetching}>
+                    <View style={styles.indicator}>
+                        <ActivityIndicator size='large' color='white' />
+                    </View>
+                </Modal> 
+            </View>
+        </ScrollView>
     );
 };
 
@@ -240,7 +243,8 @@ const styles = StyleSheet.create({
     },
     signupContainer: { 
         flexDirection: 'row',  
-        marginTop: hp(13) 
+        marginTop: hp(13),
+        marginBottom: hp(3) 
     },
     createText: { 
         fontSize : hp(2.2), 

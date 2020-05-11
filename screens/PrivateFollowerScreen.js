@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 const medium = 'AirbnbCerealMedium';
 
-const FollowerScreen = () => {
+const PrivateFollowerScreen = () => {
     const follower = useSelector(state => state.FollowReducer.followers);
 
     return (
@@ -66,13 +66,16 @@ const FollowerScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: 'white'
     },
     cardContainer: {
         marginTop: hp(3), 
         width: wp('80%'), 
         alignSelf: 'center', 
-        elevation: 5 
+        elevation: 5,
+        flex: 1,
+        backgroundColor: 'white'
     },
     alignItems: {  
         alignItems: 'center' 
@@ -83,4 +86,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default FollowerScreen;
+export default PrivateFollowerScreen;

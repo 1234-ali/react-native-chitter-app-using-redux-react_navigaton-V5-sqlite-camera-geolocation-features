@@ -6,12 +6,12 @@
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT,
-    ACCOUNT_DELETED,
     UPDATE_USERNAME,
     RESET_FAIL,
     RESET_SUCCESS,
     VERIFY_USER,
-    RESET_USER
+    RESET_USER,
+    USER_ID_LOADED
   } from '../actions/types';
 
   import AsyncStorage from '@react-native-community/async-storage';
@@ -22,6 +22,7 @@
     isAuthenticated: null,
     loading: true,
     user: null,
+    allUsers: null,
     resetUser: null,
     error: '',
     msg: ''
@@ -38,16 +39,13 @@
           isAuthenticated: true,
           loading: false,
           user: payload,
-          error: ''
         };
-      case RESET_USER:
+      case USER_ID_LOADED:
         return {
           ...state,
-          isAuthenticated: false,
+          isAuthenticated: true,
           loading: false,
-          user: null,
-          resetUser: payload,
-          error: ''
+          allUsers: payload
         };
       case REGISTER_SUCCESS:
       case RESET_SUCCESS:
@@ -70,16 +68,6 @@
           error: '',
           msg: ''
         };
-      case ACCOUNT_DELETED:
-        return {
-          ...state,
-          token: null,
-          isAuthenticated: false,
-          loading: false,
-          user: null,
-          error: '',
-          msg: ''
-        };
       case LOGIN_FAIL:
       case REGISTER_FAIL:
       case RESET_FAIL:
@@ -93,8 +81,7 @@
           msg: ''
         };
       case LOGOUT:
-        AsyncStorage.removeItem('token');
-        AsyncStorage.removeItem('id');
+        AsyncStorage.clear();
         return {
           ...state,
           token: null,
@@ -102,8 +89,6 @@
           isAuthenticated: false,
           loading: false,
           user: null,
-          error: '',
-          msg: ''
         };
       case AUTH_ERROR: 
         return {

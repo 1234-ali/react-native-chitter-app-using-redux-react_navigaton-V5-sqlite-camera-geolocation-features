@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Button, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, Button, Dimensions, StatusBar } from 'react-native';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useDispatch } from 'react-redux';
 import * as UserActions from '../store/actions/UserActions';
@@ -41,7 +41,8 @@ const SplashScreen = () => {
     
     return (
         <View style={styles.container}>
-            <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+            <StatusBar barStyle="dark-content" backgroundColor="white" />
+            <Image source={require('../assets/images/logo5.jpg')} style={styles.logo} />
         </View>
     );
 };
@@ -50,12 +51,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: '#262626'
+        backgroundColor: 'white'
     },
     logo: {
         marginTop: hp('30%'),
-        width: height > 800 ? hp(30) : 150,
-        height: height > 800 ? hp(30) : 150,
+        width: height > 800 ? hp(30) : 200,
+        height: height > 800 ? hp(30) : 200,
         resizeMode: 'contain'
     },
     centered: {
