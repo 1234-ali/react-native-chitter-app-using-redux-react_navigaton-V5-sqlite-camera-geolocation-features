@@ -175,24 +175,26 @@ const SearchScreen = () => {
                                                             <CardItem>
                                                                 <Body>
                                                                     <View style={styles.innerView}>
-                                                                        <Image source={require('../assets/images/person_image.jpg')} style={styles.userImgFront} />
-                                                                        <View style={styles.innerViewSecond}>
-                                                                            <Text style={styles.innerViewText}>
-                                                                                {  item.user.given_name }
-                                                                            </Text>
-                                                                            <Text style={styles.innerViewTag}>
-                                                                                { item.user.email.substring(0, 7) }
-                                                                            </Text>
-                                                                        </View>
-                                                                        <TouchableOpacity onPress={() => followUser(item.user.user_id)} style={styles.followContainer}>
-                                                                            { isFollowing ? 
-                                                                                <Text style={styles.followText}>
-                                                                                    Follow
+                                                                        <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImgFront} />
+                                                                        <View style={styles.innerViewWidthContainer}>
+                                                                            <View style={styles.innerViewSecond}>
+                                                                                <Text style={styles.innerViewText}>
+                                                                                    {  item.user.given_name }
                                                                                 </Text>
-                                                                            : 
-                                                                                <ActivityIndicator size='small' color='white' />
-                                                                            }
-                                                                        </TouchableOpacity>
+                                                                                <Text style={styles.innerViewTag}>
+                                                                                    { item.user.email.substring(0, 7) }
+                                                                                </Text>
+                                                                            </View>
+                                                                            <TouchableOpacity onPress={() => followUser(item.user.user_id)} style={styles.followContainer}>
+                                                                                {/* { isFollowing ?  */}
+                                                                                    <Text style={styles.followText}>
+                                                                                        Follow
+                                                                                    </Text>
+                                                                                {/* : 
+                                                                                    <ActivityIndicator size='small' color='white' />
+                                                                                } */}
+                                                                            </TouchableOpacity>
+                                                                        </View>
                                                                     </View>
                                                                 </Body>
                                                             </CardItem>
@@ -236,7 +238,7 @@ const SearchScreen = () => {
                                                 <CardItem>
                                                     <Body>
                                                         <View style={styles.flexDirection}>
-                                                            <Image source={require('../assets/images/person_image.jpg')} style={styles.userSearchImgFront} />
+                                                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userSearchImgFront} />
                                                             <View style={styles.marginLeft}>
                                                                 <Text style={{ ...styles.innerViewText, fontSize: hp(2.7), marginTop: hp(-.2) }}>
                                                                     { item.given_name }
@@ -314,6 +316,11 @@ const styles = StyleSheet.create({
         marginTop: hp(1),
         alignItems: 'center'
     },
+    innerViewWidthContainer: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        width: wp(74) 
+    },
     brushText: { 
         color: '#2C7BBF', 
         fontSize: hp(7),
@@ -361,7 +368,7 @@ const styles = StyleSheet.create({
         width: 54,
         height: 54,
         borderRadius: 30,
-        borderColor: 'rgba(0, 0, 0, .4)',
+        borderColor: '#D9D9D9',
         borderWidth: wp(.5),
         marginLeft: wp(2)
     },
@@ -382,7 +389,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         height: 35,
         borderRadius: 5,
-        marginLeft: wp(11),
+        // marginLeft: wp(11),
         marginTop: hp(-.2),
     },
     followText: { 
@@ -398,7 +405,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 25,
-        borderColor: 'rgba(0, 0, 0, .4)',
+        borderColor: '#D9D9D9',
         borderWidth: wp(.5),
         marginLeft: wp(2)
     },

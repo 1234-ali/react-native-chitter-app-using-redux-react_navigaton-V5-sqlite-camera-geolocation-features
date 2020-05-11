@@ -127,7 +127,7 @@ const HomeScreen = ({ navigation }) => {
                                                             </Text>
                                                         </View>
                                                         <Text style={styles.timeText}>
-                                                            {moment.utc(item.timestamp).local().startOf('seconds').fromNow()}
+                                                            {moment.utc(item.timestamp).fromNow()}
                                                         </Text>
                                                     </View>
                                                     <View>

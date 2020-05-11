@@ -136,7 +136,7 @@ const PostScreen = ({ navigation, route }) => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.brushContainer}>
                     <Ionicons name='ios-close' style={styles.brushText} />
                 </TouchableOpacity>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={styles.flexDirection}>
                 <TouchableOpacity onPress={postSubmission} style={{ ...styles.PostContainer }}>
                     <Text style={styles.postText}>
                         Post
@@ -214,52 +214,52 @@ const PostScreen = ({ navigation, route }) => {
             <Modal isVisible={isPosting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
                     <View style={styles.modalCardView}>
                         { !isCreated ? 
-                                <ActivityIndicator size='large' color='white' />
-                            :
-                                <Card style={styles.modalCardContainer}>
-                                    <CardItem style={styles.modalCardItem}>
-                                        <Body style={styles.modalPortfolio}>
-                                            <Text style={styles.modalPortfolioText}>
-                                                {isError ? 'An Error Occured' : 'Chit Post'}
+                            <ActivityIndicator size='large' color='white' />
+                        :
+                            <Card style={styles.modalCardContainer}>
+                                <CardItem style={styles.modalCardItem}>
+                                    <Body style={styles.modalPortfolio}>
+                                        <Text style={styles.modalPortfolioText}>
+                                            {isError ? 'An Error Occured' : 'Chit Post'}
+                                        </Text>
+                                        <TouchableOpacity 
+                                            onPress={isError ? onError : onNavigate}  
+                                            activeOpacity={0.6} 
+                                            style={styles.modalCardButtonContainer}
+                                        >
+                                            <Text style={styles.modalCardButtonText}>
+                                                {isError ? 'Try Again' : 'Go To Main Screen'}
                                             </Text>
-                                            <TouchableOpacity 
-                                                onPress={isError ? onError : onNavigate}  
-                                                activeOpacity={0.6} 
-                                                style={styles.modalCardButtonContainer}
-                                            >
-                                                <Text style={styles.modalCardButtonText}>
-                                                    {isError ? 'Try Again' : 'Go To Main Screen'}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        </Body>
-                                    </CardItem>
-                                </Card>
+                                        </TouchableOpacity>
+                                    </Body>
+                                </CardItem>
+                            </Card>
                         }
                     </View>
                 </Modal>
             <Modal isVisible={isDrafting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
                     <View style={styles.modalCardView}>
                         { !isCreated ? 
-                                <ActivityIndicator size='large' color='white' />
-                            :
-                                <Card style={styles.modalCardContainer}>
-                                    <CardItem style={styles.modalCardItem}>
-                                        <Body style={styles.modalPortfolio}>
-                                            <Text style={styles.modalPortfolioText}>
-                                                {isError ? 'An Error Occured' : 'Draft Saved'}
+                            <ActivityIndicator size='large' color='white' />
+                        :
+                            <Card style={styles.modalCardContainer}>
+                                <CardItem style={styles.modalCardItem}>
+                                    <Body style={styles.modalPortfolio}>
+                                        <Text style={styles.modalPortfolioText}>
+                                            {isError ? 'An Error Occured' : 'Draft Saved'}
+                                        </Text>
+                                        <TouchableOpacity 
+                                            onPress={isError ? onError : onNavigate}  
+                                            activeOpacity={0.6} 
+                                            style={styles.modalCardButtonContainer}
+                                        >
+                                            <Text style={styles.modalCardButtonText}>
+                                                {isError ? 'Try Again' : 'Go To Main Screen'}
                                             </Text>
-                                            <TouchableOpacity 
-                                                onPress={isError ? onError : onNavigate}  
-                                                activeOpacity={0.6} 
-                                                style={styles.modalCardButtonContainer}
-                                            >
-                                                <Text style={styles.modalCardButtonText}>
-                                                    {isError ? 'Try Again' : 'Go To Main Screen'}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        </Body>
-                                    </CardItem>
-                                </Card>
+                                        </TouchableOpacity>
+                                    </Body>
+                                </CardItem>
+                            </Card>
                         }
                     </View>
                 </Modal>

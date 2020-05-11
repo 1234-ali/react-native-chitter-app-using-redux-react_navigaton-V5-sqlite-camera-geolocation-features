@@ -44,7 +44,7 @@ const PrivateFollowingScreen = () => {
                                 <CardItem>
                                     <Body>
                                         <View style={styles.innerView}>
-                                            <Image source={require('../assets/images/person_image.jpg')} style={styles.userImgFront} /> 
+                                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImgFront} /> 
                                             <View style={styles.innerViewSecond}>
                                                 <Text style={styles.innerViewText}>
                                                     {  item.given_name }

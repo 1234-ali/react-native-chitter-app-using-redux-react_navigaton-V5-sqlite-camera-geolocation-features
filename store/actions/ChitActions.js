@@ -33,9 +33,16 @@ export const postChits = (chit_content, longitude, latitude) => async dispatch =
         headers: {
           'Content-Type': 'application/json'
         }
-      };
+    };
+
+    const location = {
+        longitude, 
+        latitude
+    }
     
-      const body = JSON.stringify({ chit_content, longitude, latitude });
+    const body = { timestamp: new Date().getTime(), chit_content, location };
+
+    console.log(body);
 
     try {
         const res = await axios.post(`${URL}/chits`, body, config);

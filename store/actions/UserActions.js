@@ -155,7 +155,14 @@ export const login = (email, password) => async dispatch => {
 };
 
 export const logout = () => async dispatch => {
+  const token = await AsyncStorage.getItem('token');
+  if (token) {
+    setAuthToken(token);
+  }
+
   try {
+    await axios.post(`${URL}/logout`);
+
     dispatch({ type: LOGOUT });
   } catch (err) {
     throw err;
