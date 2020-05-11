@@ -53,15 +53,15 @@ const PrivateFollowingScreen = () => {
                                                     { item.email.substring(0, 7) }
                                                 </Text>
                                             </View>
-                                            <TouchableOpacity onPress={() => unFollowUser(item.user_id)} style={styles.followContainer}>
+                                            {/* <TouchableOpacity onPress={() => unFollowUser(item.user_id)} style={styles.followContainer}>
                                                 {/* { !isFollowing ?  */}
-                                                    <Text style={styles.followText}>
+                                                    {/* <Text style={styles.followText}>
                                                         un follow
-                                                    </Text>
+                                                    </Text> */}
                                                 {/* :  */}
                                                     {/* <ActivityIndicator size='small' color='white' /> */}
                                                 {/* } */}
-                                            </TouchableOpacity>
+                                            {/* </TouchableOpacity> */} 
                                         </View>
                                     </Body>
                                 </CardItem>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
         width: 54,
         height: 54,
         borderRadius: 30,
-        borderColor: 'rgba(0, 0, 0, .4)',
+        borderColor: '#D9D9D9',
         borderWidth: wp(.5),
         marginLeft: wp(2)
     },

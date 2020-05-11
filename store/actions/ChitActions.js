@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { 
-    CREATE_PORTFOLIO, 
     GET_CHITS,
-    PORTFOLIO_ERROR
 } from './types';
 
 import URL from './Url';
@@ -42,18 +40,9 @@ export const postChits = (chit_content, longitude, latitude) => async dispatch =
     
     const body = { timestamp: new Date().getTime(), chit_content, location };
 
-    console.log(body);
-
     try {
-        const res = await axios.post(`${URL}/chits`, body, config);
-
-        console.log(res);
-        // dispatch({
-        //     type: GET_FOLLOWINGS,
-        //     payload: res.data
-        // });
+        await axios.post(`${URL}/chits`, body, config);
     } catch (err) {
-        console.log(err);
         throw err;
     }
 };

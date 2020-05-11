@@ -35,6 +35,7 @@ export const addDraft = (userId, title, image, date) => {
 };
 
 export const loadDraft = (userId) => {
+  console.log(userId)
   return async dispatch => {
     try {
       const dbResult = await fetchDraft(userId);

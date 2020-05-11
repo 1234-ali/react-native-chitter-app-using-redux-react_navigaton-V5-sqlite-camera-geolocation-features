@@ -10,6 +10,7 @@ const book = 'AirbnbCerealBook';
 
 const FollowingScreen = () => {
     const following = useSelector(state => state.FollowReducer.followings);
+    console.log(following)
 
     const dispatch = useDispatch();
 
@@ -36,7 +37,7 @@ const FollowingScreen = () => {
             :
                 <FlatList
                     data={following}
-                    keyExtractor={item => (item.user_id).toString()} 
+                    keyExtractor={item => (item != null && item.user_id).toString()} 
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => {
                         return (
@@ -44,20 +45,22 @@ const FollowingScreen = () => {
                                 <CardItem>
                                     <Body>
                                         <View style={styles.innerView}>
-                                            <Image source={require('../assets/images/person_image.jpg')} style={styles.userImgFront} /> 
-                                            <View style={styles.innerViewSecond}>
-                                                <Text style={styles.innerViewText}>
-                                                    {  item.given_name }
-                                                </Text>
-                                                <Text style={styles.innerViewTag}>
-                                                    { item.email.substring(0, 7) }
-                                                </Text>
-                                            </View>
-                                            <TouchableOpacity onPress={() => unFollowUser(item.user_id)} style={styles.followContainer}>
-                                                    <Text style={styles.followText}>
-                                                        un follow
+                                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImgFront} /> 
+                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: wp(77) }}>
+                                                <View style={styles.innerViewSecond}>
+                                                    <Text style={styles.innerViewText}>
+                                                        {  item.given_name }
                                                     </Text>
-                                            </TouchableOpacity>
+                                                    <Text style={styles.innerViewTag}>
+                                                        { item.email.substring(0, 7) }
+                                                    </Text>
+                                                </View>
+                                                <TouchableOpacity onPress={() => unFollowUser(item.user_id)} style={styles.followContainer}>
+                                                        <Text style={styles.followText}>
+                                                            un follow
+                                                        </Text>
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
                                     </Body>
                                 </CardItem>
@@ -127,7 +130,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         height: 35,
         borderRadius: 5,
-        marginLeft: wp(10),
         marginTop: hp(-.2),
     },
     followText: { 

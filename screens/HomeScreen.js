@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar, ScrollView, RefreshControl } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Button,  Header, Title, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
@@ -84,17 +84,25 @@ const HomeScreen = ({ navigation }) => {
                     <Ionicons name='ios-brush' style={styles.brushText} />
                 </TouchableOpacity>
             </Header>
-            <View style={{ marginTop: hp(1) }}>
+            <View style={{ marginTop: hp(1), flex: 1 }}>
                 { chits.length === 0 ?
-                        <Card style={styles.noCardContainer}>
-                            <CardItem>
-                                <Body style={styles.alignItems}>
-                                    <Text style={styles.fontFamily}>
-                                        No Chits found!
-                                    </Text>
-                                </Body>
-                            </CardItem>
-                        </Card>
+                        <ScrollView 
+                            style={{ flex: 1, backgroundColor: 'white' }}
+                            showsVerticalScrollIndicator={false} 
+                            refreshControl={
+                                <RefreshControl refreshing={isRefreshing} onRefresh={userChits} />
+                            }
+                        >
+                            <Card style={styles.noCardContainer}>
+                                <CardItem>
+                                    <Body style={styles.alignItems}>
+                                        <Text style={styles.fontFamily}>
+                                            No Chits found!
+                                        </Text>
+                                    </Body>
+                                </CardItem>
+                            </Card>
+                        </ScrollView>
                     :
                         <FlatList 
                             onRefresh={userChits}
@@ -118,17 +126,19 @@ const HomeScreen = ({ navigation }) => {
                                                             <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImg} />
                                                         }
 
-                                                        <View style={styles.textViewContainer}>
-                                                            <Text style={styles.userText}>
-                                                                {item.user.given_name} {item.user.Family_name}
-                                                            </Text>
-                                                            <Text style={styles.hashTagText}>
-                                                                @Alih12
+                                                        <View style={styles.textSubContainer}>
+                                                            <View style={styles.textViewContainer}>
+                                                                <Text style={styles.userText}>
+                                                                    {item.user.given_name} {item.user.Family_name}
+                                                                </Text>
+                                                                <Text style={styles.hashTagText}>
+                                                                    @Alih12
+                                                                </Text>
+                                                            </View>
+                                                            <Text style={styles.timeText}>
+                                                                {moment(item.timestamp).fromNow()}
                                                             </Text>
                                                         </View>
-                                                        <Text style={styles.timeText}>
-                                                            {moment.utc(item.timestamp).fromNow()}
-                                                        </Text>
                                                     </View>
                                                     <View>
                                                         <Text style={styles.chitContent}>
@@ -208,13 +218,17 @@ const styles = StyleSheet.create({
         borderColor: '#D9D9D9',
         borderWidth: wp(.5),
     },
+    textSubContainer: { 
+        flexDirection: 'row', 
+        width: wp('80%'),  
+        justifyContent: 'space-between' 
+    },
     cardViewContainer: { 
         flexDirection: 'row', 
         marginLeft: wp(-2) 
     },
     textViewContainer: { 
         marginLeft: wp(2), 
-        width: wp('50%') 
     },
     userText: { 
         fontSize: hp(2.5), 

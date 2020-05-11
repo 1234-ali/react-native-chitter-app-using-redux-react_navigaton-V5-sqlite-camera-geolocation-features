@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar, ScrollView, RefreshControl } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Input, Button, Icon, Header, Card, CardItem, Body } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -17,9 +17,9 @@ const SearchScreen = () => {
     const searchUser = useSelector(state => state.FollowReducer.users);
     const following = useSelector(state => state.FollowReducer.followings);
 
-    const filteredArray = chits.filter(function(item) {
-            return !following.includes(item.user.user_id); 
-    });
+    // const filteredArray = chits.filter(function(item) {
+    //         return !following.includes(item.user.user_id); 
+    // });
     
     const [query, setQuery] = useState('');
 
@@ -152,56 +152,66 @@ const SearchScreen = () => {
                                     </Text>
                                     <View style={styles.secondView}>
                                         { chits.length === 0 ?
-                                            <Card style={styles.noCardContainer}>
-                                                <CardItem>
-                                                    <Body style={styles.alignItems}>
-                                                        <Text style={styles.fontFamily}>
-                                                            No Suggestions !
-                                                        </Text>
-                                                    </Body>
-                                                </CardItem>
-                                            </Card>
+                                            <ScrollView 
+                                                style={{ flex: 1, backgroundColor: 'white' }}
+                                                showsVerticalScrollIndicator={false} 
+                                                refreshControl={
+                                                    <RefreshControl refreshing={isRefreshing} onRefresh={userChits} />
+                                                }
+                                            >
+                                                <Card style={styles.noCardContainer}>
+                                                    <CardItem>
+                                                        <Body style={styles.alignItems}>
+                                                            <Text style={styles.fontFamily}>
+                                                                No Suggestions !
+                                                            </Text>
+                                                        </Body>
+                                                    </CardItem>
+                                                </Card>
+                                            </ScrollView>
                                         :
-                                            <FlatList 
-                                                onRefresh={userChits}
-                                                refreshing={isRefreshing}
-                                                data={filteredArray}
-                                                keyExtractor={item => (item.chit_id).toString()} 
-                                                showsVerticalScrollIndicator={false}
-                                                renderItem={({ item, index }) => {
-                                                    return (
+                                            // <View style={{ flex: 1 }}>
+                                                <FlatList 
+                                                    onRefresh={userChits}
+                                                    refreshing={isRefreshing}
+                                                    data={chits}
+                                                    keyExtractor={item => (item.chit_id).toString()} 
+                                                    showsVerticalScrollIndicator={false}
+                                                    renderItem={({ item, index }) => {
+                                                        return (
 
-                                                    <Card style={styles.secondViewCard}>
-                                                            <CardItem>
-                                                                <Body>
-                                                                    <View style={styles.innerView}>
-                                                                        <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImgFront} />
-                                                                        <View style={styles.innerViewWidthContainer}>
-                                                                            <View style={styles.innerViewSecond}>
-                                                                                <Text style={styles.innerViewText}>
-                                                                                    {  item.user.given_name }
-                                                                                </Text>
-                                                                                <Text style={styles.innerViewTag}>
-                                                                                    { item.user.email.substring(0, 7) }
-                                                                                </Text>
-                                                                            </View>
-                                                                            <TouchableOpacity onPress={() => followUser(item.user.user_id)} style={styles.followContainer}>
-                                                                                {/* { isFollowing ?  */}
-                                                                                    <Text style={styles.followText}>
-                                                                                        Follow
+                                                        <Card style={styles.secondViewCard}>
+                                                                <CardItem>
+                                                                    <Body>
+                                                                        <View style={styles.innerView}>
+                                                                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImgFront} />
+                                                                            <View style={styles.innerViewWidthContainer}>
+                                                                                <View style={styles.innerViewSecond}>
+                                                                                    <Text style={styles.innerViewText}>
+                                                                                        {  item.user.given_name }
                                                                                     </Text>
-                                                                                {/* : 
-                                                                                    <ActivityIndicator size='small' color='white' />
-                                                                                } */}
-                                                                            </TouchableOpacity>
+                                                                                    <Text style={styles.innerViewTag}>
+                                                                                        { item.user.email.substring(0, 7) }
+                                                                                    </Text>
+                                                                                </View>
+                                                                                <TouchableOpacity onPress={() => followUser(item.user.user_id)} style={styles.followContainer}>
+                                                                                    {/* { isFollowing ?  */}
+                                                                                        <Text style={styles.followText}>
+                                                                                            Follow
+                                                                                        </Text>
+                                                                                    {/* : 
+                                                                                        <ActivityIndicator size='small' color='white' />
+                                                                                    } */}
+                                                                                </TouchableOpacity>
+                                                                            </View>
                                                                         </View>
-                                                                    </View>
-                                                                </Body>
-                                                            </CardItem>
-                                                        </Card>
-                                                    )
-                                                }} 
-                                            />
+                                                                    </Body>
+                                                                </CardItem>
+                                                            </Card>
+                                                        )
+                                                    }} 
+                                                />
+                                            // </View>
                                         }
                                     </View>
                                 </View>
@@ -332,10 +342,11 @@ const styles = StyleSheet.create({
         marginTop: hp(1) 
     },
     mainCardContainer: { 
-        marginTop: hp(10) 
+        marginTop: hp(10),
+        flex: 1 
     },
     mainCardView: { 
-        width: wp(90) 
+        width: wp(90) ,
     },
     marginLeft: { 
         marginLeft: hp(1) 
@@ -348,12 +359,13 @@ const styles = StyleSheet.create({
         width: wp(100), 
         alignItems: 'center', 
         marginLeft: wp(-5),  
-        marginTop: hp(1)
+        marginTop: hp(1),
+        
     },
     secondViewCard: { 
         marginTop: hp(1), 
         width: wp(95), 
-        elevation: 5
+        elevation: 5, 
     },
     innerView: { 
         flexDirection: 'row',

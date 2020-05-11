@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableWithoutFeedback, StatusBar, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableWithoutFeedback, StatusBar, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Icon, Header, Title, Card, CardItem, Body } from 'native-base';
 import moment from 'moment';
@@ -90,15 +90,23 @@ const DraftScreen = ({ navigation }) => {
                 <Entypo name='water' style={styles.waterIcon} />
             </Header>
             { draft.length === 0 ?
-                <Card style={styles.noCardContainer}>
-                    <CardItem>
-                        <Body style={styles.alignItems}>
-                            <Text style={styles.fontFamily}>
-                                No draft found!
-                            </Text>
-                        </Body>
-                    </CardItem>
-                </Card>
+                <ScrollView 
+                    style={{ flex: 1, backgroundColor: 'white' }}
+                    showsVerticalScrollIndicator={false} 
+                    refreshControl={
+                        <RefreshControl refreshing={isRefreshing} onRefresh={userDrafts} />
+                    }
+                >
+                    <Card style={styles.noCardContainer}>
+                        <CardItem>
+                            <Body style={styles.alignItems}>
+                                <Text style={styles.fontFamily}>
+                                    No draft found!
+                                </Text>
+                            </Body>
+                        </CardItem>
+                    </Card>
+                </ScrollView>
             :
                 <FlatList 
                     onRefresh={userDrafts}

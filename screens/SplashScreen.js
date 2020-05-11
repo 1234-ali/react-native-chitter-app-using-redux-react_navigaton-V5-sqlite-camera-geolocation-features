@@ -23,7 +23,7 @@ const SplashScreen = () => {
     useEffect(() => {
         setTimeout(() => {
             screenNavigation();
-        }, 1000);
+        }, 500);
     }, []);
 
     if (error) {

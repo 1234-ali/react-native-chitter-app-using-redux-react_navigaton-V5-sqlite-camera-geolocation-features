@@ -10,6 +10,8 @@ const book = 'AirbnbCerealBook';
 const FollowerScreen = () => {
     const follower = useSelector(state => state.FollowReducer.followers);
 
+    
+
     return (
         <View style={styles.container}>
             { follower.length === 0 ?
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
         width: 54,
         height: 54,
         borderRadius: 30,
-        borderColor: 'rgba(0, 0, 0, .4)',
+        borderColor: '#D9D9D9',
         borderWidth: wp(.5),
         marginLeft: wp(2)
     },
