@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar, ScrollView, RefreshControl, Dimensions, TouchableOpacityBase } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Input, Button, Icon, Header, Card, CardItem, Body } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,18 +8,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as ChitActions from '../store/actions/ChitActions';
 import * as FollowActions from '../store/actions/FollowActions';
 
+const { height } = Dimensions.get('window');
+
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
-const SearchScreen = () => {
+const SearchScreen = ({ navigation }) => {
     const user = useSelector(state => state.UserReducer.user);
     const chits = useSelector(state => state.ChitReducer.chits);
     const searchUser = useSelector(state => state.FollowReducer.users);
-    const following = useSelector(state => state.FollowReducer.followings);
-
-    // const filteredArray = chits.filter(function(item) {
-    //         return !following.includes(item.user.user_id); 
-    // });
     
     const [query, setQuery] = useState('');
 
@@ -124,7 +121,7 @@ const SearchScreen = () => {
                         <TouchableOpacity onPress={() => setChangeView(false)} style={styles.margin}> 
                             <Icon name='arrow-back' style={styles.backIcon} />
                         </TouchableOpacity>
-                        <View style={{ ...styles.flexDirection, width: wp(85) }}>
+                        <View style={styles.liveSearchContainer}>
                             <Input 
                                 autoCorrect={false}
                                 autoFocus
@@ -170,48 +167,42 @@ const SearchScreen = () => {
                                                 </Card>
                                             </ScrollView>
                                         :
-                                            // <View style={{ flex: 1 }}>
-                                                <FlatList 
-                                                    onRefresh={userChits}
-                                                    refreshing={isRefreshing}
-                                                    data={chits}
-                                                    keyExtractor={item => (item.chit_id).toString()} 
-                                                    showsVerticalScrollIndicator={false}
-                                                    renderItem={({ item, index }) => {
-                                                        return (
+                                            <FlatList 
+                                                onRefresh={userChits}
+                                                refreshing={isRefreshing}
+                                                data={chits}
+                                                keyExtractor={item => (item.chit_id).toString()} 
+                                                showsVerticalScrollIndicator={false}
+                                                renderItem={({ item, index }) => {
+                                                    return (
 
-                                                        <Card style={styles.secondViewCard}>
-                                                                <CardItem>
-                                                                    <Body>
-                                                                        <View style={styles.innerView}>
-                                                                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImgFront} />
-                                                                            <View style={styles.innerViewWidthContainer}>
-                                                                                <View style={styles.innerViewSecond}>
-                                                                                    <Text style={styles.innerViewText}>
-                                                                                        {  item.user.given_name }
-                                                                                    </Text>
-                                                                                    <Text style={styles.innerViewTag}>
-                                                                                        { item.user.email.substring(0, 7) }
-                                                                                    </Text>
-                                                                                </View>
-                                                                                <TouchableOpacity onPress={() => followUser(item.user.user_id)} style={styles.followContainer}>
-                                                                                    {/* { isFollowing ?  */}
-                                                                                        <Text style={styles.followText}>
-                                                                                            Follow
-                                                                                        </Text>
-                                                                                    {/* : 
-                                                                                        <ActivityIndicator size='small' color='white' />
-                                                                                    } */}
-                                                                                </TouchableOpacity>
+                                                    <Card style={styles.secondViewCard}>
+                                                            <CardItem>
+                                                                <Body>
+                                                                    <View style={styles.innerView}>
+                                                                        <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImgFront} />
+                                                                        <View style={styles.innerViewWidthContainer}>
+                                                                            <View style={styles.innerViewSecond}>
+                                                                                <Text style={styles.innerViewText}>
+                                                                                    {  item.user.given_name }
+                                                                                </Text>
+                                                                                <Text style={styles.innerViewTag}>
+                                                                                    { item.user.email.substring(0, 7) }
+                                                                                </Text>
                                                                             </View>
+                                                                            <TouchableOpacity onPress={() => followUser(item.user.user_id)} style={styles.followContainer}>
+                                                                                    <Text style={styles.followText}>
+                                                                                        Follow
+                                                                                    </Text>
+                                                                            </TouchableOpacity>
                                                                         </View>
-                                                                    </Body>
-                                                                </CardItem>
-                                                            </Card>
-                                                        )
-                                                    }} 
-                                                />
-                                            // </View>
+                                                                    </View>
+                                                                </Body>
+                                                            </CardItem>
+                                                        </Card>
+                                                    )
+                                                }} 
+                                            />
                                         }
                                     </View>
                                 </View>
@@ -244,23 +235,28 @@ const SearchScreen = () => {
                                     showsVerticalScrollIndicator={false}
                                     renderItem={({ item }) => {
                                         return (
-                                            <Card style={styles.liveSearchCard}>
-                                                <CardItem>
-                                                    <Body>
-                                                        <View style={styles.flexDirection}>
-                                                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userSearchImgFront} />
-                                                            <View style={styles.marginLeft}>
-                                                                <Text style={{ ...styles.innerViewText, fontSize: hp(2.7), marginTop: hp(-.2) }}>
-                                                                    { item.given_name }
-                                                                </Text>
-                                                                <Text style={{...styles.innerViewTag, fontSize: 18, marginTop: hp(-.1),  color: 'rgba(0 , 0, 0, .8)' }}>
-                                                                    { item.email.substring(0, 7) }
-                                                                </Text>
+                                            <TouchableOpacity 
+                                                activeOpacity={0.7} 
+                                                onPress={() => navigation.navigate('privateUser', { userId: item.user_id })}
+                                            >
+                                                <Card style={styles.liveSearchCard}>
+                                                    <CardItem>
+                                                        <Body>
+                                                            <View style={styles.flexDirection}>
+                                                                <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userSearchImgFront} />
+                                                                <View style={styles.marginLeft}>
+                                                                    <Text style={{ ...styles.innerViewText, fontSize: hp(2.7), marginTop: hp(-.2) }}>
+                                                                        { item.given_name }
+                                                                    </Text>
+                                                                    <Text style={{...styles.innerViewTag, fontSize: 18, marginTop: hp(-.1),  color: 'rgba(0 , 0, 0, .8)' }}>
+                                                                        { item.email.substring(0, 7) }
+                                                                    </Text>
+                                                                </View>
                                                             </View>
-                                                        </View>
-                                                    </Body>
-                                                </CardItem>
-                                            </Card>
+                                                        </Body>
+                                                    </CardItem>
+                                                </Card>
+                                            </TouchableOpacity>
                                         )
                                     }}
                                 />
@@ -292,27 +288,27 @@ const styles = StyleSheet.create({
         fontFamily: book 
     },
     waterIcon: { 
-        marginLeft: wp(5), 
+        marginLeft: height > 800 ? wp(10) : wp(5), 
         fontSize: hp(3.1),  
         color: 'blue', 
         marginTop: hp(.5) 
     },
-    liveSearchInput: { 
-        width: wp(50), 
+    liveSearchInput: {
+        width: height > 800 ? wp(65) : wp(50), 
         padding: 10,
-        marginLeft: wp(2)
+        marginLeft: height > 800 ? wp(3) : wp(2)
     },
     imgFront: {
-        width: wp('12%'),
-        height: hp('6%'),
-        borderRadius: wp('30%'),
+        width: height > 800 ?  47 : wp('12%'),
+        height: height > 800 ?  47 : hp('6%'),
+        borderRadius: height > 800 ?  23.5 : wp('30%'),
         borderColor: '#D9D9D9',
         borderWidth: wp(.5),
         marginLeft: wp(2)
     },
     inputContainer: { 
-        width: wp(64), 
-        height: hp(5.7), 
+        width: height > 800 ? wp(67) : wp(64), 
+        height:  height > 800 ?  hp(5) : hp(5.7), 
         backgroundColor: 'white', 
         borderRadius: 30,
         borderWidth: 1, 
@@ -329,7 +325,7 @@ const styles = StyleSheet.create({
     innerViewWidthContainer: { 
         flexDirection: 'row', 
         justifyContent: 'space-between', 
-        width: wp(74) 
+        width: height > 800 ?  wp(81) : wp(74),
     },
     brushText: { 
         color: '#2C7BBF', 
@@ -338,15 +334,16 @@ const styles = StyleSheet.create({
     backIcon: { 
         marginLeft: 8, 
         color: '#024873', 
-        fontSize: 30,
+        fontSize: height > 800 ? 40 : 30,
         marginTop: hp(1) 
     },
     mainCardContainer: { 
         marginTop: hp(10),
-        flex: 1 
+        flex: 1,
     },
     mainCardView: { 
         width: wp(90) ,
+        alignSelf: 'center',
     },
     marginLeft: { 
         marginLeft: hp(1) 
@@ -360,12 +357,11 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         marginLeft: wp(-5),  
         marginTop: hp(1),
-        
     },
     secondViewCard: { 
         marginTop: hp(1), 
         width: wp(95), 
-        elevation: 5, 
+        elevation: 5,
     },
     innerView: { 
         flexDirection: 'row',
@@ -391,7 +387,7 @@ const styles = StyleSheet.create({
     innerViewTag: { 
         fontFamily: book, 
         marginTop: hp(.7), 
-        fontSize: hp(2.5), 
+        fontSize: height > 800 ?  hp(2.1) : hp(2.5), 
         marginTop: hp(.6) 
     },
     followContainer: { 
@@ -401,7 +397,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         height: 35,
         borderRadius: 5,
-        // marginLeft: wp(11),
         marginTop: hp(-.2),
     },
     followText: { 
@@ -420,6 +415,10 @@ const styles = StyleSheet.create({
         borderColor: '#D9D9D9',
         borderWidth: wp(.5),
         marginLeft: wp(2)
+    },
+    liveSearchContainer: {
+        flexDirection: 'row',
+        width: height > 800 ?  wp(90) : wp(85),
     },
     liveSearchView: {
         marginTop: hp(5) 

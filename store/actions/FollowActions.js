@@ -54,7 +54,6 @@ export const getFollowings = () => async dispatch => {
             payload: res.data
         });
     } catch (err) {
-        console.log(err);
         throw err;
     }
 };
@@ -66,14 +65,8 @@ export const followUser = (id) => async dispatch => {
         }
 
         try {
-            const res = await axios.post(`${URL}/user/${id}/follow`);
-
-            dispatch({
-                type: GET_FOLLOWINGS,
-                payload: res.data
-            });
+            await axios.post(`${URL}/user/${id}/follow`);
         } catch (err) {
-            console.log(err);
             throw err;
         }
 };
@@ -85,14 +78,7 @@ export const unFollowUser = (id) => async dispatch => {
     }
 
     try {
-      const res = await axios.delete(`${URL}/user/${id}/follow`);
-
-      console.log(res)
-
-      dispatch({
-        type: GET_FOLLOWINGS,
-        payload: res.data
-      });
+      await axios.delete(`${URL}/user/${id}/follow`);
   } catch (err) {
       throw err;
   }

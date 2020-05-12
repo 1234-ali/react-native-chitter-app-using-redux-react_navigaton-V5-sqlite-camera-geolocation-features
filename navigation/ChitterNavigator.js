@@ -17,7 +17,6 @@ const Drawer = createDrawerNavigator();
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
-import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
 import FeedScreen from '../screens/FeedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -58,7 +57,7 @@ function ChitterTab({ navigation }) {
                     ),
                 }}
             />
-            <Tab.Screen 
+            {/* <Tab.Screen 
                 name="feed" 
                 component={FeedScreen}
                 options={{
@@ -66,7 +65,7 @@ function ChitterTab({ navigation }) {
                         <FontAwesome name="feed" color={color} size={size} />
                     ),
                 }}
-            />
+            /> */}
             <Tab.Screen 
                 name="profile" 
                 component={ProfileScreen}
@@ -112,7 +111,6 @@ const ChitterNavigator = () => {
                     <>
                         <Stack.Screen name="login" component={LoginScreen} />
                         <Stack.Screen name="signup" component={SignUpScreen}  />
-                        <Stack.Screen name="forgetPassword" component={ForgetPasswordScreen} />
                     </>
                 :
                     <>
@@ -120,7 +118,7 @@ const ChitterNavigator = () => {
                         <Stack.Screen name="post" component={PostScreen} />
                         <Stack.Screen name="updateDraft" component={UpdateDraftScreen} />
                         <Stack.Screen name="privateUser" component={PrivateUserScreen} />
-                        <Stack.Screen name="user" component={UserScreen} />
+                        <Stack.Screen name="user" component={UserScreen} options={{ ...TransitionPresets.SlideFromRightIOS, gestureDirection: 'horizontal' }} />
                     </>
                 }
             </Stack.Navigator>

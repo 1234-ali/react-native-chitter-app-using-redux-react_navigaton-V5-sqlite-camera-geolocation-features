@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Card, CardItem, Body } from 'native-base';
 import { useSelector, useDispatch } from 'react-redux';
 import * as FollowActions from '../store/actions/FollowActions';
+
+const { height } = Dimensions.get('window');
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
@@ -53,15 +55,6 @@ const PrivateFollowingScreen = () => {
                                                     { item.email.substring(0, 7) }
                                                 </Text>
                                             </View>
-                                            {/* <TouchableOpacity onPress={() => unFollowUser(item.user_id)} style={styles.followContainer}>
-                                                {/* { !isFollowing ?  */}
-                                                    {/* <Text style={styles.followText}>
-                                                        un follow
-                                                    </Text> */}
-                                                {/* :  */}
-                                                    {/* <ActivityIndicator size='small' color='white' /> */}
-                                                {/* } */}
-                                            {/* </TouchableOpacity> */} 
                                         </View>
                                     </Body>
                                 </CardItem>
@@ -101,7 +94,7 @@ const styles = StyleSheet.create({
     innerView: { 
         flexDirection: 'row',
         width: wp(85), 
-        marginLeft: wp(-5) 
+        marginLeft: height > 800 ?  wp(0) :  wp(-5) 
     },
     innerViewText: { 
         fontSize: hp(2.6), 
@@ -120,9 +113,8 @@ const styles = StyleSheet.create({
         marginTop: hp(.1) 
     },
     innerViewTag: { 
-        fontFamily: book, 
-        marginTop: hp(.7), 
-        fontSize: hp(2.5), 
+        fontFamily: book,
+        fontSize: height > 800 ?  hp(2) : hp(2.5), 
         marginTop: hp(.6) 
     },
     followContainer: { 

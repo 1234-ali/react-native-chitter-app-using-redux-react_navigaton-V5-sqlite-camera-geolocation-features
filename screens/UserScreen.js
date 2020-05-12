@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Image, TouchableWithoutFeedback, Animated, ActivityIndicator, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Image, TouchableWithoutFeedback, Animated, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Input, Item, Button, Icon, Header, Title, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
@@ -7,6 +7,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
 import * as UserActions from '../store/actions/UserActions';
+
+const { height } = Dimensions.get('window');
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
@@ -78,7 +80,7 @@ const UserScreen = ({ navigation }) => {
                     <Card style={styles.cardContainer}>
                         <CardItem style={styles.cardItem}>
                             <Body style={styles.cardBody}>
-                                <Item rounded style={styles.itemContainer}>
+                                <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
                                     <Input 
                                         placeholder='First Name' 
                                         autoCorrect={false} 
@@ -259,8 +261,8 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     },
     imageContainer: { 
-        height: 150, 
-        width: 150, 
+        height:  height > 800 ?  175 : 150, 
+        width:  height > 800 ?  175 : 150, 
         marginTop: hp(4), 
         alignSelf: 'center' 
     },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar, Dimensions, ScrollView, RefreshControl } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Button,  Header, Title, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
@@ -8,6 +8,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import * as ChitActions from '../store/actions/ChitActions';
 import * as FollowActions from '../store/actions/FollowActions';
+
+const { height } = Dimensions.get('window');
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
@@ -187,18 +189,18 @@ const styles = StyleSheet.create({
         fontSize:hp(4)
     },
     imgFront: {
-        width: wp('12%'),
-        height: hp('6%'),
-        borderRadius: wp('30%'),
+        width: height > 800 ?  45 : wp('12%'),
+        height: height > 800 ?  45  : hp('6%'),
+        borderRadius: height > 800 ?  22.5 : wp('30%'),
         borderColor: '#D9D9D9',
         borderWidth: wp(.5),
     },
     brushContainer: { 
         backgroundColor: 'rgba(0 , 0 , 0 , .12)', 
-        borderRadius: 120, 
+        borderRadius: 22.5, 
         alignItems: 'center',
-        width: wp('12%'),
-        height: hp('6%'), 
+        width: height > 800 ?  45 : wp('12%'),
+        height: height > 800 ?  45 : hp('6%'), 
         justifyContent: 'center' 
     },
     brushText: { 
@@ -212,15 +214,15 @@ const styles = StyleSheet.create({
         fontSize: 30  
     },
     userImg: {
-        width: wp('15%'),
-        height: hp('7.5%'),
-        borderRadius: wp('32%'),
+        width: height > 800 ?  65 : wp('15%'),
+        height: height > 800 ?  65 : hp('7.5%'),
+        borderRadius: height > 800 ?  32.5 : wp('32%'),
         borderColor: '#D9D9D9',
         borderWidth: wp(.5),
     },
     textSubContainer: { 
         flexDirection: 'row', 
-        width: wp('80%'),  
+        width: height > 800 ? wp('85%') : wp('80%'),  
         justifyContent: 'space-between' 
     },
     cardViewContainer: { 
@@ -237,7 +239,7 @@ const styles = StyleSheet.create({
     hashTagText: { 
         fontFamily: book, 
         marginTop: hp(.5), 
-        fontSize: hp(2.2) 
+        fontSize: height > 800 ? hp(2) : hp(2.2) 
     },
     timeText: { 
         fontSize: hp(2), 

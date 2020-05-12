@@ -6,7 +6,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 
 import FollowerScreen from './FollowerScreen';
-import ChitterScreen from './ChitterScreen';
 import FollowingScreen from './FollowingScreen';
 
 const medium = 'AirbnbCerealMedium';

@@ -33,7 +33,6 @@
   
     switch (type) {
       case USER_LOADED:
-      case UPDATE_USERNAME:
         return {
           ...state,
           isAuthenticated: true,
@@ -48,8 +47,6 @@
           allUsers: payload
         };
       case REGISTER_SUCCESS:
-      case RESET_SUCCESS:
-      case VERIFY_USER:
         return {
           ...state,
           msg: payload,
@@ -66,18 +63,6 @@
           isAuthenticated: true,
           loading: false,
           error: '',
-          msg: ''
-        };
-      case LOGIN_FAIL:
-      case REGISTER_FAIL:
-      case RESET_FAIL:
-        return {
-          ...state,
-          token: null,
-          isAuthenticated: false,
-          loading: false,
-          user: null,
-          error: payload,
           msg: ''
         };
       case LOGOUT:

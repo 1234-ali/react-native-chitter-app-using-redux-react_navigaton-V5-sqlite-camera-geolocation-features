@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableWithoutFeedback, StatusBar, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableWithoutFeedback, StatusBar, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl, Dimensions } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Icon, Header, Title, Card, CardItem, Body } from 'native-base';
 import moment from 'moment';
@@ -9,6 +9,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
 import * as DraftActions from '../store/actions/DraftActions';
+
+const { height } = Dimensions.get('window');
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
@@ -260,17 +262,34 @@ const styles = StyleSheet.create({
     fontFamily: { 
         fontFamily: medium 
     },
-    cardContainer: { width: wp(90), alignSelf: 'center', borderRadius: 10, elevation: 5 },
-    cardView: { flexDirection: 'row', width: wp(80), justifyContent: 'space-between'},
-    time: { fontSize: hp(2), marginTop: hp(1), fontFamily: book },
-    flexDirection: { flexDirection: 'row' },
-    cardItem: {  borderRadius: 10 },
+    cardContainer: { 
+        width: wp(90), 
+        alignSelf: 'center', 
+        borderRadius: 10, 
+        elevation: 5 
+    },
+    cardView: { 
+        flexDirection: 'row', 
+        width: wp(80), 
+        justifyContent: 'space-between'
+    },
+    time: { 
+        fontSize: hp(2), 
+        marginTop: hp(1), 
+        fontFamily: book 
+    },
+    flexDirection: { 
+        flexDirection: 'row' 
+    },
+    cardItem: { 
+        borderRadius: 10 
+    },
     brushContainer: { 
         backgroundColor: 'rgba(0 , 0 , 0 , .12)', 
-        borderRadius: 120, 
+        borderRadius: height > 800 ?  30 : 120, 
         alignItems: 'center',
-        width: wp('12%'),
-        height: hp('6%'), 
+        width: height > 800 ?  60 : wp('12%'),
+        height: height > 800 ?  60 : hp('6%'), 
         justifyContent: 'center' 
     },
     bigImageContainer: {

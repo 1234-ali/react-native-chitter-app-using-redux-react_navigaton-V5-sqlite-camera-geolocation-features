@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as UserActions from '../store/actions/UserActions';
 import Feather from 'react-native-vector-icons/Feather';
 
-let width =  Dimensions.get('window').width;
+const { height } = Dimensions.get('window');
 
 const medium = 'AirbnbCerealMedium';
 
@@ -164,7 +164,7 @@ const CustomDrawerContent = (props) => {
 
 const styles = StyleSheet.create({
     header: { 
-        height: hp('40%'), 
+        height: height > 800 ?  hp('35%') : hp('40%'), 
         backgroundColor: 'white',
     },
     body: { 
@@ -210,10 +210,10 @@ const styles = StyleSheet.create({
         fontFamily: medium,
     },
     textContainer: { 
-        marginTop: 7
+        marginTop:  height > 800 ?  9 : 7
     },
     text: { 
-        fontSize: hp(3.6), 
+        fontSize: height > 800 ?  hp(3) : hp(3.6), 
         fontFamily: medium 
     },
     followerContainer: {
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
         marginTop: 8
     },
     followerText: {
-        fontSize: hp(2.1), 
+        fontSize: height > 800 ?  hp(2) : hp(2.1), 
         fontFamily: medium 
     }
 });

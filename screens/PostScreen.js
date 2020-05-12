@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
@@ -12,6 +12,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
 import * as DraftActions from '../store/actions/DraftActions';
 import * as ChitActions from '../store/actions/ChitActions';
+
+const { height } = Dimensions.get('window');
 
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
@@ -316,9 +318,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between' 
     },
     imgFront: {
-        width: wp('13%'),
-        height: hp('6.5%'),
-        borderRadius: wp('30%'),
+        width: height > 800 ?  60 : wp('13%'),
+        height: height > 800 ?  60 : hp('6.5%'),
+        borderRadius: height > 800 ?  30 : wp('30%'),
         borderColor: '#D9D9D9',
         borderWidth: wp(.5),
         marginLeft: wp(3),
@@ -327,7 +329,7 @@ const styles = StyleSheet.create({
     input: { 
         color: 'rgba(0, 0, 0, .9)', 
         width: wp(80), 
-        fontSize: 23, 
+        fontSize: height > 800 ?  32 : 23, 
         marginLeft: wp(2),
         fontFamily: book  
     },

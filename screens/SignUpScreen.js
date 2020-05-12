@@ -7,6 +7,8 @@ import Modal from 'react-native-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import * as UserActions from '../store/actions/UserActions';
 
+const { height } = Dimensions.get('window');
+
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
@@ -266,8 +268,8 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     },
     imageContainer: { 
-        height: 150, 
-        width: 150, 
+        height: height > 800 ?  175 : 150, 
+        width: height > 800 ?  175 : 150, 
         marginTop: hp(5), 
         alignSelf: 'center' 
     },

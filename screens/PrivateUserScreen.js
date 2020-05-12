@@ -8,7 +8,6 @@ import * as ChitActions from '../store/actions/ChitActions';
 import * as FollowActions from '../store/actions/FollowActions';
 
 import PrivateFollowerScreen from './PrivateFollowerScreen';
-import ChitterScreen from './ChitterScreen';
 import PrivateFollowingScreen from './PrivateFollowingScreen';
 
 const medium = 'AirbnbCerealMedium';
