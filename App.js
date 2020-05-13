@@ -11,16 +11,12 @@ import UserReducer from './store/reducers/UserReducer';
 import DraftReducer from './store/reducers/DraftReducer';
 import ChitReducer from './store/reducers/ChitReducer';
 import FollowReducer from './store/reducers/FollowReducer';
-// import ReviewReducer from './store/reducers/ReviewReducer';
 
 const rootReducer = combineReducers({
   UserReducer,
   DraftReducer,
   ChitReducer,
   FollowReducer,
-  // MessageReducer,
-  // OrderReducer,
-  // ReviewReducer
 });
 
 const store = createStore(

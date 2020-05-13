@@ -57,15 +57,6 @@ function ChitterTab({ navigation }) {
                     ),
                 }}
             />
-            {/* <Tab.Screen 
-                name="feed" 
-                component={FeedScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <FontAwesome name="feed" color={color} size={size} />
-                    ),
-                }}
-            /> */}
             <Tab.Screen 
                 name="profile" 
                 component={ProfileScreen}

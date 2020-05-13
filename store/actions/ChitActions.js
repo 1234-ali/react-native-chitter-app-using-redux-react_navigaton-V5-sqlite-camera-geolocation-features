@@ -14,8 +14,6 @@ export const getChits = () => async dispatch => {
     try {
         const res = await axios.get(`${URL}/chits`);
 
-        console.log(res)
-
         dispatch({
             type: GET_CHITS,
             payload: res.data

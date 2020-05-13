@@ -1,7 +1,6 @@
 var RNFS = require('react-native-fs');
 
 import { 
-  ADD_DRAFT,
   SET_DRAFT
 } from './types';
 
@@ -19,27 +18,24 @@ export const addDraft = (userId, title, image, date) => {
           newPath
       );
       
-      const dbResult = await insertDraft(
+      await insertDraft(
         userId,
         title,
         newPath,
         date
       );
 
-      console.log(dbResult);
     } catch (err) {
-      console.log(err);
       throw err;
     }
   };
 };
 
 export const loadDraft = (userId) => {
-  console.log(userId)
   return async dispatch => {
     try {
       const dbResult = await fetchDraft(userId);
-      // console.log(dbResult);
+
       dispatch({ type: SET_DRAFT, drafts: dbResult });
     } catch (err) {
       throw err
@@ -52,9 +48,7 @@ export const deleteDraft = (id) => {
     try {
       const dbResult = await dropDraft(id);
       
-      console.log(dbResult);
       loadDraft();
-      // dispatch({ type: SET_DRAFT, drafts: dbResult });
     } catch (err) {
       throw err
     }
@@ -80,7 +74,6 @@ export const updateDraft = (id, userId, title, image, date) => {
         date
       );
 
-      console.log(dbResult);
     } catch (err) {
       throw err;
     }

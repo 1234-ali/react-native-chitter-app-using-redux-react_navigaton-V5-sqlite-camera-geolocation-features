@@ -58,7 +58,6 @@
           ...payload,
           isAuthenticated: true,
           loading: false,
-          error: '',
           msg: ''
         };
       case LOGOUT:

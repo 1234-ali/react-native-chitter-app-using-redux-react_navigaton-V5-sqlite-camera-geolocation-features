@@ -24,6 +24,7 @@ const PostScreen = ({ navigation }) => {
 
     const [title, setTitle] = useState('');
     const [image, setImage] = useState('');
+    
     const [fetchingLocation, setFetchingLocation] = useState(false);
 
     const [isImage, setIsImage] = useState(null);
@@ -121,12 +122,16 @@ const PostScreen = ({ navigation }) => {
     };
 
     const draftSubmission = async () => {
-        setIsDrafting(true);
-        try {
-            await dispatch(DraftActions.addDraft(user != null && (user.user_id).toString(), title, image, new Date().toString()));
-            setIsCreated(true);
-        } catch (error) {
-            setIsError(true);
+        if (title == '', image == '') {
+            Alert.alert('Enter text and image');
+        } else {
+            setIsDrafting(true);
+            try {
+                await dispatch(DraftActions.addDraft(user != null && (user.user_id).toString(), title, image, new Date().toString()));
+                setIsCreated(true);
+            } catch (error) {
+                setIsError(true);
+            }
         }
     };
 

@@ -91,9 +91,9 @@ const CustomDrawerContent = (props) => {
                     <StatusBar backgroundColor='white' barStyle='dark-content' />
                     <Body style={styles.body}>
                         { userImg != '' ?
-                                <TouchableOpacity onPress={pickImage} style={styles.uploadImgContainer}>
+                                <View onPress={pickImage} style={styles.uploadImgContainer}>
                                     <Image source={{ uri: `data:${userImg.type};base64,${userImg.data}` }}  style={styles.img} />
-                                </TouchableOpacity>
+                                </View>
                             : isImage == null ?
                                 <TouchableOpacity onPress={pickImage} style={{ ...styles.imgContainer, borderColor: '#D9D9D9' }}>
                                         <View style={styles.uploadImg}>

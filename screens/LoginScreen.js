@@ -13,15 +13,12 @@ const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
 const LoginScreen = ({ navigation }) => {
-    const token = useSelector(state => state.UserReducer);
-
     const [fadeAnim] = useState(new Animated.Value(0));
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const [isFetching, setIsFetching] = useState(false);
-    const [isMessage, setIsMessage] = useState();
 
     const dispatch = useDispatch();
 
@@ -46,7 +43,6 @@ const LoginScreen = ({ navigation }) => {
         } else if (password.length < 6) {
             Alert.alert('Password length must be greater than 6 digits');
         } else {
-            setIsMessage(null);
             setIsFetching(true);
             try {
                 await dispatch(UserActions.login(email, password));
@@ -54,18 +50,12 @@ const LoginScreen = ({ navigation }) => {
                 Alert.alert(error.message);
             }
             setIsFetching(false);
-            setIsMessage(true);
         }
-    };
-
-    const message = () => {
-        navigation.navigate('drawer');
     };
 
     return (
          <View style={styles.container}>
              <StatusBar barStyle="dark-content" backgroundColor="white" />
-             { isMessage && token.msg != '' && message() }
              <KeyboardAvoidingView behavior='position'>
                 <View style={styles.imageContainer}>
                     <Image source={require('../assets/images/logo5.jpg')} style={styles.image} />
