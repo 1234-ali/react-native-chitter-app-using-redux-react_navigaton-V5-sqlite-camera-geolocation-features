@@ -1,11 +1,14 @@
 import axios from 'axios';
+
 import {
   REGISTER_SUCCESS,
   USER_LOADED,
   AUTH_ERROR,
   LOGIN_SUCCESS,
   USER_ID_LOADED,
+  IMAGE_ID_LOADED,
   LOGOUT,
+  IMAGE_LOADED
 } from './types';
 
 import URL from './Url';
@@ -34,6 +37,38 @@ export const loadUser = () => async dispatch => {
   }
 };
 
+export const loadImage = () => async dispatch => {
+
+    const item = await AsyncStorage.getItem('id');
+
+    const id = parseInt(item);
+  
+    try {
+      const res = await axios.get(`${URL}/user/${id}/photo`);
+  
+      dispatch({
+        type: IMAGE_LOADED,
+        payload: res.data
+      });
+    } catch (err) {
+      throw err;
+    }
+};
+
+export const getImageById = (id) => async dispatch => {
+
+  try {
+    const res = await axios.get(`${URL}/user/${id}/photo`);
+
+    dispatch({
+      type: IMAGE_ID_LOADED,
+      payload: res.data
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const getUserById = (id) => async dispatch => {
 
   try {
@@ -53,32 +88,25 @@ export const uploadImage = (image) => async dispatch => {
   if (token) {
     setAuthToken(token);
   }
-  
-  const photo = {
-    uri: image.uri,
-    type: image.type,
-    name: image.fileName,
-  };
 
-  const form = new FormData();
-
-  form.append("test", photo);
+  const config = {
+    headers: {
+      "Accept": "*/*", 
+      "Content-Type": image.type,
+    }
+  }
 
   axios.post(
-    `${URL}/user/photo`,
-    {
-      body: form,
-      headers: {
-        'accept' : 'application/json',
-        'Content-Type': 'image/jpeg',
-      }
-    }
+    `${URL}/user/photo`, image, config
   )
-  .then((responseData) => {
-    console.log("Success" + JSON.stringify(responseData));
+  .then((res) => {
+    dispatch({
+      type: IMAGE_LOADED,
+      payload: JSON.parse(res.config.data)
+    });
   })
-  .catch((error) => {
-    console.log("ERROR ")
+  .catch((err) => {
+    throw err;
   });
 };
 
@@ -161,7 +189,7 @@ export const logout = () => async dispatch => {
   }
 
   try {
-    await axios.post(`${URL}/logout`);
+    // await axios.post(`${URL}/logout`);
 
     dispatch({ type: LOGOUT });
   } catch (err) {

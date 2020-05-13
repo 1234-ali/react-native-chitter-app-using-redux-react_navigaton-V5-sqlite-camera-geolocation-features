@@ -18,7 +18,7 @@ import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import HomeScreen from '../screens/HomeScreen';
-import FeedScreen from '../screens/FeedScreen';
+import ChitImageScreen from '../screens/ChitImageScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SearchScreen from '../screens/SearchScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
@@ -100,14 +100,14 @@ function MyDrawer() {
 
 
 const ChitterNavigator = () => {    
-    const token = useSelector(state => state.UserReducer);
+    const user = useSelector(state => state.UserReducer);
     
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="splash" headerMode="none">
-                { token.loading ? 
+                { user.loading ? 
                     <Stack.Screen name="splash" component={SplashScreen} />
-                : token.isAuthenticated === null || !token.isAuthenticated ?
+                : user.isAuthenticated === null || !user.isAuthenticated ?
                     <>
                         <Stack.Screen name="login" component={LoginScreen} />
                         <Stack.Screen name="signup" component={SignUpScreen}  />
@@ -119,6 +119,7 @@ const ChitterNavigator = () => {
                         <Stack.Screen name="updateDraft" component={UpdateDraftScreen} />
                         <Stack.Screen name="privateUser" component={PrivateUserScreen} />
                         <Stack.Screen name="user" component={UserScreen} options={{ ...TransitionPresets.SlideFromRightIOS, gestureDirection: 'horizontal' }} />
+                        <Stack.Screen name="chitImage" component={ChitImageScreen} options={{ ...TransitionPresets.SlideFromRightIOS, gestureDirection: 'horizontal' }} />
                     </>
                 }
             </Stack.Navigator>

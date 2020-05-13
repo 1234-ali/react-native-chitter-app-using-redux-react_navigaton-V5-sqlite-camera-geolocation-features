@@ -15,6 +15,7 @@ const SplashScreen = () => {
         setError(null);
         try {
             await dispatch(UserActions.loadUser());
+            await dispatch(UserActions.loadImage());
         } catch (error) {
             setError(true);
         }

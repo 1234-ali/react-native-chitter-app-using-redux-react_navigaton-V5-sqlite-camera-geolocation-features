@@ -27,7 +27,6 @@ const SignUpScreen = ({ navigation }) => {
     const [hideRePassword, setHideRePassword] = useState(true);
 
     const [isFetching, setIsFetching] = useState(false);
-    const [isError, setIsError] = useState();
     const [isMessage, setIsMessage] = useState();
 
     useEffect(() => {
@@ -53,7 +52,6 @@ const SignUpScreen = ({ navigation }) => {
         } else if (password.length < 6) {
             Alert.alert('Password length must be greater than 6 digits');
         } else {
-            setIsError(null);
             setIsMessage(null);
             setIsFetching(true);
             try {
@@ -64,12 +62,7 @@ const SignUpScreen = ({ navigation }) => {
             setFirstName(''); setLastName(''); setEmail(''); setPassword(''); setRePassword('');
             setIsFetching(false);
             setIsMessage(true);
-            setIsError(true);
         }
-    };
-
-    const error = (error) => {
-        Alert.alert(error, '', [{text: 'OK', onPress: () => setIsError()}]);
     };
 
     const message = (msg) => {
@@ -80,7 +73,6 @@ const SignUpScreen = ({ navigation }) => {
         <ScrollView style={{ flex: 1 }}>
             <StatusBar barStyle="dark-content" backgroundColor="white" />
             <View style={styles.container}>
-                { isError && token.error != '' && error(token.error) }
                 { isMessage && token.msg != '' && message(token.msg) }
                 <KeyboardAvoidingView behavior='position'>
                     <View style={styles.imageContainer}>

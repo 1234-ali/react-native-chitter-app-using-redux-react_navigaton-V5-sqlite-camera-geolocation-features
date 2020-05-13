@@ -1,16 +1,11 @@
   import {
     REGISTER_SUCCESS,
-    REGISTER_FAIL,
+    IMAGE_LOADED,
     USER_LOADED,
     AUTH_ERROR,
     LOGIN_SUCCESS,
-    LOGIN_FAIL,
     LOGOUT,
-    UPDATE_USERNAME,
-    RESET_FAIL,
-    RESET_SUCCESS,
-    VERIFY_USER,
-    RESET_USER,
+    IMAGE_ID_LOADED,
     USER_ID_LOADED
   } from '../actions/types';
 
@@ -22,8 +17,9 @@
     isAuthenticated: null,
     loading: true,
     user: null,
+    userImg: '',
     allUsers: null,
-    resetUser: null,
+    allImg: '',
     error: '',
     msg: ''
   };
@@ -74,6 +70,18 @@
           isAuthenticated: false,
           loading: false,
           user: null,
+        };
+      case IMAGE_LOADED:
+        return {
+          ...state,
+          userImg: payload,
+          loading: false
+        };
+      case IMAGE_ID_LOADED: 
+        return {
+          ...state,
+          allImg: payload,
+          loading: false
         };
       case AUTH_ERROR: 
         return {

@@ -15,6 +15,7 @@ const UserProfileScreen = ({ navigation }) => {
     const user = useSelector(state => state.UserReducer.user);
     const follower = useSelector(state => state.FollowReducer.followers);
     const following = useSelector(state => state.FollowReducer.followings);
+    const userImg = useSelector(state => state.UserReducer.userImg);
 
     return (
         <View style={styles.container}>
@@ -34,7 +35,11 @@ const UserProfileScreen = ({ navigation }) => {
             </Header>
             <View style={styles.secondContainer}>
                 <View style={styles.imgContainer}>
-                    <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.img} />
+                    { userImg != ''  ?
+                            <Image source={{ uri: `data:${userImg.type};base64,${userImg.data}` }} style={styles.img} />
+                        :
+                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.img} />
+                    }
                 </View>
                 <View style={styles.textContainer}>
                     <Text style={styles.text}>

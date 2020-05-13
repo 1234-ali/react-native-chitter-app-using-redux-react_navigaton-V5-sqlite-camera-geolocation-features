@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar, Dimensions, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, StatusBar, Dimensions, ScrollView, RefreshControl, TouchableOpacityBase } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Button,  Header, Title, Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
@@ -15,10 +15,8 @@ const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
 const HomeScreen = ({ navigation }) => {
-    const user = useSelector(state => state.UserReducer.user);
     const chits = useSelector(state => state.ChitReducer.chits);
-
-    const [openImage, setOpenImage] = useState(false);
+    const userImg = useSelector(state => state.UserReducer.userImg);
     
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState();
@@ -73,8 +71,8 @@ const HomeScreen = ({ navigation }) => {
             <Header style={styles.headerContainer}>
                 <StatusBar barStyle="dark-content" backgroundColor="white" /> 
                 <View>
-                    { user != null && user.hasOwnProperty('user_profile_photo_path') ?
-                        <Image source={{ uri: `${user.user_profile_photo_path}` }} style={styles.imgFront} />
+                    { userImg != ''  ?
+                        <Image source={{ uri: `data:${userImg.type};base64,${userImg.data}` }} style={styles.imgFront} />
                     :
                         <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.imgFront} />
                     }
@@ -82,7 +80,7 @@ const HomeScreen = ({ navigation }) => {
                 <View>
                     <Title style={styles.header}>Home</Title>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate('post', { userImg: user != null && user.hasOwnProperty('user_profile_photo_path') ? user.user_profile_photo_path : 'http://www.gravatar.com/avatar/?d=mm' }) } style={styles.brushContainer}>
+                <TouchableOpacity onPress={() => navigation.navigate('post')} style={styles.brushContainer}>
                     <Ionicons name='ios-brush' style={styles.brushText} />
                 </TouchableOpacity>
             </Header>
@@ -114,61 +112,49 @@ const HomeScreen = ({ navigation }) => {
                             showsVerticalScrollIndicator={false}
                             renderItem={({ item }) => {
                                 return (
-                                    <TouchableOpacity  
-                                        activeOpacity={0.7} 
-                                        onPress={() => navigation.navigate('privateUser', { userId: item.user.user_id })}
-                                    >
-                                        <Card>
-                                            <CardItem>
-                                                <Body>
-                                                    <View style={styles.cardViewContainer}>
-                                                        { item.user.hasOwnProperty('user_profile_photo_path') ?
-                                                            <Image source={{ uri: `${item.user.user_profile_photo_path}` }} style={styles.userImg} />
-                                                        :
+                                    <>
+                                        <TouchableOpacity  
+                                            activeOpacity={0.7} 
+                                            onPress={() => navigation.navigate('privateUser', { userId: item.user.user_id })}
+                                        >
+                                            <Card>
+                                                <CardItem>
+                                                    <Body>
+                                                        <View style={styles.cardViewContainer}>
                                                             <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImg} />
-                                                        }
-
-                                                        <View style={styles.textSubContainer}>
-                                                            <View style={styles.textViewContainer}>
-                                                                <Text style={styles.userText}>
-                                                                    {item.user.given_name} {item.user.Family_name}
-                                                                </Text>
-                                                                <Text style={styles.hashTagText}>
-                                                                    @Alih12
+                                   
+                                                            <View style={styles.textSubContainer}>
+                                                                <View style={styles.textViewContainer}>
+                                                                    <Text style={styles.userText}>
+                                                                        {item.user.given_name}
+                                                                    </Text>
+                                                                    <Text style={styles.hashTagText}>
+                                                                        { item.user.email.substring(0, 5) }
+                                                                    </Text>
+                                                                </View>
+                                                                <Text style={styles.timeText}>
+                                                                    { moment(item.timestamp).fromNow() }
                                                                 </Text>
                                                             </View>
-                                                            <Text style={styles.timeText}>
-                                                                {moment(item.timestamp).fromNow()}
+                                                        </View>
+                                                        <View>
+                                                            <Text style={styles.chitContent}>
+                                                                {item.chit_content}
                                                             </Text>
                                                         </View>
-                                                    </View>
-                                                    <View>
-                                                        <Text style={styles.chitContent}>
-                                                            {item.chit_content}
-                                                        </Text>
-                                                        { item.hasOwnProperty('chittr_chit_photo') && 
-                                                            <TouchableOpacity onPress={() => setOpenImage(true)} style={styles.bigImageContainer}>
-                                                                <Image  source={{ uri: `${item.chittr_chit_photo.photo_path}` }} style={styles.bigImage} />
-                                                            </TouchableOpacity>
-                                                        }
-                                                    </View>
-                                                </Body>
-                                            </CardItem>
-                                        </Card>
-                                    </TouchableOpacity>
+                                                    </Body>
+                                                </CardItem>
+                                            </Card>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => navigation.navigate('chitImage', { chitId : item.chit_id })} style={styles.chitImageIcon}>
+                                            <Ionicons name='ios-arrow-dropdown-circle' size={hp(3.5)} />
+                                        </TouchableOpacity>
+                                    </>
                                 )
                             }}
                     />
                 }
             </View>
-            <Modal isVisible={openImage}  style={styles.modalContainer} >
-                <View style={styles.modalView}>
-                    <TouchableOpacity onPress={() => setOpenImage(false)} style={{...styles.brushContainer, backgroundColor: '#00acee', marginTop: hp(12), marginBottom: hp(10) }}>
-                        <Ionicons name='ios-close' style={{...styles.brushText, color: 'white', fontSize: hp(6)}} />
-                    </TouchableOpacity>
-                    <Image source={require('../assets/images/person_image.jpg')} style={styles.modalbigImage} />
-                </View>
-            </Modal>
         </View>
     );
 }
@@ -297,6 +283,11 @@ const styles = StyleSheet.create({
     fontFamily: { 
         fontFamily: medium 
     },
+    chitImageIcon: { 
+        alignSelf: 'center', 
+        zIndex: 1, 
+        marginTop: hp(-2.5) 
+    }
 });
 
 export default HomeScreen;

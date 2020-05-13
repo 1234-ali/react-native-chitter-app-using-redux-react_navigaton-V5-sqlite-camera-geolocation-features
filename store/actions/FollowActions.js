@@ -78,7 +78,9 @@ export const unFollowUser = (id) => async dispatch => {
     }
 
     try {
+        
       await axios.delete(`${URL}/user/${id}/follow`);
+
   } catch (err) {
       throw err;
   }

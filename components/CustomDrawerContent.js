@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StatusBar, StyleSheet, Dimensions, Share, Alert, TouchableOpacity, ImageBackground, ActivityIndicator  } from 'react-native';
 import { Container, Content, Header, Body } from 'native-base';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import ImagePicker from 'react-native-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,9 +13,10 @@ const { height } = Dimensions.get('window');
 const medium = 'AirbnbCerealMedium';
 
 const CustomDrawerContent = (props) => {
-    const token = useSelector(state => state.UserReducer.user);
+    const user = useSelector(state => state.UserReducer.user);
     const follower = useSelector(state => state.FollowReducer.followers);
     const following = useSelector(state => state.FollowReducer.followings);
+    const userImg = useSelector(state => state.UserReducer.userImg);
 
     const [isImage, setIsImage] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -49,12 +50,9 @@ const CustomDrawerContent = (props) => {
           });
           if (result.action === Share.sharedAction) {
             if (result.activityType) {
-              // shared with activity type of result.activityType
             } else {
-              // shared
             }
           } else if (result.action === Share.dismissedAction) {
-            // dismissed
           }
         } catch (error) {
           alert(error.message);
@@ -92,10 +90,10 @@ const CustomDrawerContent = (props) => {
                 <Header style={styles.header}>
                     <StatusBar backgroundColor='white' barStyle='dark-content' />
                     <Body style={styles.body}>
-                        { token != null && token.hasOwnProperty('user_profile_photo_path') ?
-                                <View style={styles.uploadImgContainer}>
-                                    <Image source={{ uri: `${token.user_profile_photo_path}` }}  style={styles.img} />
-                                </View>
+                        { userImg != '' ?
+                                <TouchableOpacity onPress={pickImage} style={styles.uploadImgContainer}>
+                                    <Image source={{ uri: `data:${userImg.type};base64,${userImg.data}` }}  style={styles.img} />
+                                </TouchableOpacity>
                             : isImage == null ?
                                 <TouchableOpacity onPress={pickImage} style={{ ...styles.imgContainer, borderColor: '#D9D9D9' }}>
                                         <View style={styles.uploadImg}>
@@ -120,7 +118,7 @@ const CustomDrawerContent = (props) => {
                         
                         <View style={styles.textContainer}>
                             <Text style={styles.text}>
-                                {token != null && token.given_name} {token != null && token.family_name}
+                                {user != null && user.given_name} {user != null && user.family_name}
                             </Text>
                         </View>
                         <View style={styles.followContainer}>

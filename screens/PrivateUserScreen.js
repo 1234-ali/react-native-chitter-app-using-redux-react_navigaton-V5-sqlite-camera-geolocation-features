@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Image, RefreshControl, ActivityIndicator, StatusBar } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Button, Icon, Tab, Tabs, TabHeading } from 'native-base';
 import { useSelector, useDispatch } from 'react-redux';
 import * as UserActions from '../store/actions/UserActions';
-import * as ChitActions from '../store/actions/ChitActions';
 import * as FollowActions from '../store/actions/FollowActions';
 
 import PrivateFollowerScreen from './PrivateFollowerScreen';
@@ -17,6 +16,7 @@ const PrivateUserScreen = ({ navigation, route }) => {
     const user = useSelector(state => state.UserReducer.allUsers);
     const follower = useSelector(state => state.FollowReducer.privatefollower);
     const following = useSelector(state => state.FollowReducer.privatefollowings);
+    const userImg = useSelector(state => state.UserReducer.allImg);
 
     const { userId } = route.params;
 
@@ -31,7 +31,7 @@ const PrivateUserScreen = ({ navigation, route }) => {
         setIsRefreshing(true);
         try {
             await dispatch(UserActions.getUserById(userId));
-            // await dispatch(ChitActions.getChits());
+            await dispatch(UserActions.getImageById(userId));
             await dispatch(FollowActions.getFollowersById(userId));
             await dispatch(FollowActions.getFollowingsById(userId));
         } catch (err) {
@@ -86,14 +86,18 @@ const PrivateUserScreen = ({ navigation, route }) => {
                 </View>
                 <View style={styles.secondContainer}>
                     <View style={styles.imgContainer}>
-                        <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.img} />
+                        { userImg != ''  ?
+                            <Image source={{ uri: `data:${userImg.type};base64,${userImg.data}` }} style={styles.img} />
+                        :
+                            <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.img} />
+                        }
                     </View>
                     <View style={styles.textContainer}>
                         <Text style={styles.text}>
                             { user != null && user.given_name } { user != null && user.family_name }
                         </Text>
                     </View>
-                    <View style={{ marginTop: hp(2) }}>
+                    <View style={styles.marginTop}>
                         <View style={styles.followerContainer}>
                             <Text style={{ ...styles.followerText, marginRight: 6 }}>
                                 { follower.length }
@@ -112,13 +116,10 @@ const PrivateUserScreen = ({ navigation, route }) => {
                         </View>
                     </View>
                 </View>
-                <Tabs tabBarUnderlineStyle={{ backgroundColor: 'silver' }} >
+                <Tabs tabBarUnderlineStyle={styles.tabColor} >
                     <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Followers</Text></TabHeading>}>
                         <PrivateFollowerScreen />
                     </Tab>
-                    {/* <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Chitters</Text></TabHeading>}>
-                        <ChitterScreen />
-                    </Tab> */}
                     <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Following</Text></TabHeading>}>
                         <PrivateFollowingScreen />
                     </Tab>
@@ -196,6 +197,9 @@ const styles = StyleSheet.create({
     tab: {
         backgroundColor: 'white'
     },
+    tabColor: { 
+        backgroundColor: 'silver' 
+    },
     tabTextColor: {
         color:'rgba(0 , 0 , 0, .8)',
         fontFamily: medium,
@@ -206,6 +210,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    marginTop: { 
+        marginTop: hp(2) 
+    }
 })
 
 export default PrivateUserScreen;

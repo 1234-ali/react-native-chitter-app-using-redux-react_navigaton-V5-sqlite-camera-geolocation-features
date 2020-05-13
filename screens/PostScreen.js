@@ -18,14 +18,15 @@ const { height } = Dimensions.get('window');
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
-const PostScreen = ({ navigation, route }) => {
+const PostScreen = ({ navigation }) => {
     const user = useSelector(state => state.UserReducer.user);
-
-    const { userImg } = route.params;
+    const userImg = useSelector(state => state.UserReducer.userImg);
 
     const [title, setTitle] = useState('');
     const [image, setImage] = useState('');
     const [fetchingLocation, setFetchingLocation] = useState(false);
+
+    const [isImage, setIsImage] = useState(null);
 
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
@@ -55,6 +56,8 @@ const PostScreen = ({ navigation, route }) => {
                 const source = { uri: response.uri };
             
                 setImage(source.uri);
+
+                setIsImage(response);
             }
         });
     };
@@ -79,6 +82,8 @@ const PostScreen = ({ navigation, route }) => {
                 const source = { uri: response.uri };
 
                 setImage(source.uri);
+
+                setIsImage(response);
             }
         });
     
@@ -102,12 +107,16 @@ const PostScreen = ({ navigation, route }) => {
     const dispatch = useDispatch();
 
     const postSubmission = async () => {
-        setIsPosting(true);
-        try {
-            await dispatch(ChitActions.postChits(title, lng, lat));
-            setIsCreated(true);
-        } catch (error) {
-            setIsError(true);
+        if (title == '') {
+            Alert.alert('Write the post');
+        } else {
+            setIsPosting(true);
+            try {
+                await dispatch(ChitActions.postChits(title, lng, lat, isImage));
+                setIsCreated(true);
+            } catch (error) {
+                setIsError(true);
+            }
         }
     };
 
@@ -153,7 +162,11 @@ const PostScreen = ({ navigation, route }) => {
             </View>
             <View style={styles.secondContainer}>
                 <View style={styles.flexDirection}>
-                    <Image source={{ uri: `${userImg}` }} style={styles.imgFront} />
+                    { userImg != ''  ?
+                        <Image source={{ uri: `data:${userImg.type};base64,${userImg.data}` }} style={styles.imgFront} />
+                    :
+                        <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.imgFront} />
+                    }
                     <TextInput 
                         multiline={true}
                         autoCorrect={false}

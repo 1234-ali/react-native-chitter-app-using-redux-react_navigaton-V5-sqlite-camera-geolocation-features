@@ -1,16 +1,13 @@
   import {
-    GET_PROFILE,
-    PROFILE_ERROR,
-    UPDATE_PROFILE,
     GET_CHITS,
-    CREATE_PORTFOLIO,
-    UPDATE_PORTFOLIO,
-    PORTFOLIO_ERROR
+    CHIT_IMAGE_LOADED,
+    CHIT_IMAGE_ERROR
   } from '../actions/types';
   
   const initialState = {
     profile: null,
     chits: [],
+    chitImg: null,
     loading: true
   };
   
@@ -24,6 +21,18 @@
           chits: payload,
           loading: false
         };
+        case CHIT_IMAGE_LOADED:
+          return {
+            ...state,
+            chitImg: payload,
+            loading: false
+          }; 
+        case CHIT_IMAGE_ERROR:
+          return {
+            ...state,
+            chitImg: null,
+            loading: false
+          }; 
       default:
         return state;
     }
