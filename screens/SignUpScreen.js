@@ -12,39 +12,47 @@ const { height } = Dimensions.get('window');
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
+//  All above are same please check other files like draft Screen.js
+
 const SignUpScreen = ({ navigation }) => {
     const token = useSelector(state => state.UserReducer);
 
-    const [fadeAnim] = useState(new Animated.Value(0));
+    const [fadeAnim] = useState(new Animated.Value(0));  // used for button animation initial value is 0
 
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [rePassword, setRePassword] = useState('');
+    const [firstName, setFirstName] = useState(''); // for firstName from text input below
+    const [lastName, setLastName] = useState(''); // for lastName from text input below
+    const [email, setEmail] = useState(''); // for email from text input below
+    const [password, setPassword] = useState(''); // for password from text input below
+    const [rePassword, setRePassword] = useState(''); // for rePassword from text input below
 
-    const [hidePassword, setHidePassword] = useState(true);
-    const [hideRePassword, setHideRePassword] = useState(true);
+    const [hidePassword, setHidePassword] = useState(true);   // states for hide and show password. 
+    const [hideRePassword, setHideRePassword] = useState(true); // states for hide and show re enterpassword. 
 
-    const [isFetching, setIsFetching] = useState(false);
-    const [isMessage, setIsMessage] = useState();
+    const [isFetching, setIsFetching] = useState(false); 
+    // these are the states used for fetching data from the server.
+    // when api is calling then isFetching is true then when api call is complete then is fetching is false.
 
-    useEffect(() => {
+    const [isMessage, setIsMessage] = useState(); // is used to display meesage that user is registerd from the server
+
+    // below useEffect same as login screen
+    useEffect(() => {   // it is used for button animation, when screens opens it automatically animates the button
         Animated.timing(
-          fadeAnim,
-          {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true
-          }
-        ).start();
+            fadeAnim, // it is initialize in line 19 with intial animation state 0
+            {
+            toValue: 1,  // changing animation value from 0 to 1
+            duration: 2000,  // times taken to change value
+            useNativeDriver: true // used for animation
+            }
+        ).start();  // to start the animation
     }, []);
 
-    const dispatch = useDispatch();
 
-    const onSubmit = async () => {
-        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const dispatch = useDispatch(); // it is used to dispatch the action from every screens. call the functions from action folders.
 
+    const onSubmit = async () => { // function to submit signup form 
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // to check user enter the correct email syntax
+
+        // below are conditions to check validity
         if (firstName == '' || lastName == '' || email == '' || password == '' || rePassword == '' || reg.test(email) == false) {
             Alert.alert('Enter the valid credentials');
         } else if (password != rePassword) {
@@ -55,19 +63,21 @@ const SignUpScreen = ({ navigation }) => {
             setIsMessage(null);
             setIsFetching(true);
             try {
-                await dispatch(UserActions.register(firstName, lastName, email, password));
+                await dispatch(UserActions.register(firstName, lastName, email, password));  // used to sign up user from server. dispatching actions from UserActions file. imported above
             } catch (error) {
-                Alert.alert(error.message);
+                Alert.alert(error.message); // if error occurs during sign up, error message shown 
             }
-            setFirstName(''); setLastName(''); setEmail(''); setPassword(''); setRePassword('');
+            setFirstName(''); setLastName(''); setEmail(''); setPassword(''); setRePassword(''); // after sign up set the state to initaial state
             setIsFetching(false);
-            setIsMessage(true);
+            setIsMessage(true); // if message is true then it display message
         }
     };
 
-    const message = (msg) => {
+    const message = (msg) => { // used for display message from the server lie user is sign up or registered 
         Alert.alert(msg, '', [{text: 'OK', onPress: () => setIsMessage()}]);
     };
+
+    // below is same as login screen code pls check login screen return 
 
     return (
         <ScrollView style={{ flex: 1 }}>
@@ -173,6 +183,7 @@ const SignUpScreen = ({ navigation }) => {
     );
 };
 
+// below is css of this screen
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -12,86 +12,98 @@ const { height } = Dimensions.get('window');
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
+
+//  All above are same please check other files like draft Screen.js
+
 const LoginScreen = ({ navigation }) => {
-    const [fadeAnim] = useState(new Animated.Value(0));
+    const [fadeAnim] = useState(new Animated.Value(0));  // used for button animation initial value is 0
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');  // email
+    const [password, setPassword] = useState(''); // for password user write
 
-    const [isFetching, setIsFetching] = useState(false);
+    const [isFetching, setIsFetching] = useState(false); 
+    // these are the states used for fetching data from the server.
+    // when api is calling then isFetching is true then when api call is complete then is fetching is false.
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); // it is used to dispatch the action from every screens. call the functions from action folders.
 
-    const [hidePassword, setHidePassword] = useState(true);
+    const [hidePassword, setHidePassword] = useState(true); // states for hide and show password. 
+    //when false passwrd show, true not show in tet input
 
-    useEffect(() => {
+    useEffect(() => {   // it is used for button animation, when screens opens it automatically animates the button
         Animated.timing(
-          fadeAnim,
+          fadeAnim, // it is initialize in line 19 with intial animation state 0
           {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true
+            toValue: 1,  // changing animation value from 0 to 1
+            duration: 2000,  // times taken to change value
+            useNativeDriver: true // used for animation
           }
-        ).start();
+        ).start();  // to start the animation
     }, []);
 
-    const onSubmit = async () => {
-        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const onSubmit = async () => {  // function to submit login form 
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;  // to check user enter the correct email syntax
 
-        if (email == '' || password == '' || reg.test(email) == false ) {
-            Alert.alert('Enter the valid credentials');
-        } else if (password.length < 6) {
+        if (email == '' || password == '' || reg.test(email) == false ) {  // user enter, no email, password, or incorrect email syntax
+            Alert.alert('Enter the valid credentials'); // alert box display
+        } else if (password.length < 6) { // password length < 6 this alert box display
             Alert.alert('Password length must be greater than 6 digits');
         } else {
-            setIsFetching(true);
+            setIsFetching(true); // if true modal appears 
             try {
-                await dispatch(UserActions.login(email, password));
+                await dispatch(UserActions.login(email, password)); // used to login user from server. dispatching actions from UserActions file. imported above
             } catch (error) {
-                Alert.alert(error.message);
+                Alert.alert(error.message); //if error occurs the message display
             }
-            setIsFetching(false);
+            setIsFetching(false); // if false modal disappears 
         }
     };
 
     return (
          <View style={styles.container}>
+             {/* to show status bar */}
              <StatusBar barStyle="dark-content" backgroundColor="white" />
-             <KeyboardAvoidingView behavior='position'>
+             {/* KeyboardAvoidingView is used to avoid keyborad */}
+             <KeyboardAvoidingView behavior='position'> 
                 <View style={styles.imageContainer}>
                     <Image source={require('../assets/images/logo5.jpg')} style={styles.image} />
                 </View>
+                {/* Card, CardItem, Body import from native base ui library */}
                 <Card style={styles.cardContainer}>
                     <CardItem style={styles.cardItem}>
                         <Body style={styles.cardBody}>
                             <Text style={styles.loginText}>
                                 Login
                             </Text>
+                            {/* input, Item rounded is from native base, rounded rount the text input  */}
                             <Item rounded style={styles.itemContainer}>
-                                <Input 
+                                <Input  // it is for email
                                     placeholder='Email' 
                                     autoCorrect={false} 
                                     keyboardType='email-address' 
                                     style={styles.itemText}
-                                    value={email}
-                                    onChangeText={(text) => setEmail(text)}
+                                    value={email} // email value
+                                    onChangeText={(text) => setEmail(text)} // onchangetext changing the value of email input
                                 />
                             </Item>
+                            {/* input, Item rounded is from native bases, rounded rount the text input */}
                             <Item rounded style={{ ...styles.itemContainer, marginTop: hp(2.5) }}>
                                 <Input 
                                     placeholder='Password' 
                                     autoCorrect={false} 
-                                    secureTextEntry={hidePassword} 
+                                    secureTextEntry={hidePassword} // used to hide and show password
                                     style={styles.itemText} 
-                                    value={password}
-                                    onChangeText={(text) => setPassword(text)}
+                                    value={password} // password value
+                                    onChangeText={(text) => setPassword(text)} // onchangetext changing the value of password input
                                 />
-                                { hidePassword ? 
+                                { hidePassword ?  // below icons used for to hide and show password, you can check on Press event changing the state
                                     <Feather name='eye' size={hp('2.5%')} color='#3A403D' onPress={() => setHidePassword(false)} style={styles.hideIcon} />
                                 :   
                                     <Feather name='eye-off' size={hp('2.5%')} color='#3A403D' onPress={() => setHidePassword(true)} style={styles.hideIcon} />
                                 }   
                             </Item>
-                            <Animated.View style={{ opacity: fadeAnim }}>
+                            {/* Animated.View is for button animation. style={{ opacity: fadeAnim }} => it changing the opacity of button from changing value from 0 to 1.  onPress it calls on Submit function */}
+                            <Animated.View style={{ opacity: fadeAnim }}> 
                                 <Button onPress={onSubmit} rounded success style={{...styles.buttonContainer, marginBottom: hp(2) }}>
                                     <Text  style={styles.buttonText}>Login</Text>
                                 </Button>
@@ -100,6 +112,8 @@ const LoginScreen = ({ navigation }) => {
                     </CardItem>
                 </Card>
             </KeyboardAvoidingView>
+
+            {/* the below code is for to create an account. clicking on signup. navigates to sign up screen */}
             
             <View style={styles.signupContainer}> 
                 <Text style={styles.createText}>
@@ -111,6 +125,8 @@ const LoginScreen = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity>
             </View>
+            {/* modal from react native modal to display when calling api from this screen and show activity indicator */}
+            {/* isVisible={isFetching} => if isFetching true modal display otherwise not display */}
             <Modal isVisible={isFetching}>
                 <View style={styles.indicator}>
                     <ActivityIndicator size='large' color='white' />
@@ -120,6 +136,7 @@ const LoginScreen = ({ navigation }) => {
     );
 };
 
+//The below is all css and styling of screen
 const styles = StyleSheet.create({
     container: {
         flex: 1,

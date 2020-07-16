@@ -1,46 +1,56 @@
+// This screen file is used to display followers. this a follower display screen
+
 import React from 'react';
 import { View, Text, StyleSheet, Image, FlatList, Dimensions } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Card, CardItem, Body } from 'native-base';
-import { useSelector } from 'react-redux';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'; // package used to make screen responsive
+import { Card, CardItem, Body } from 'native-base'; // native-base is used a ui library. buuton is used from native base on this screen
+import { useSelector } from 'react-redux'; // this is used to dispatching actions and selecting global states
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get('window'); // dimensions is used to find width and height of the device screen
 
-const medium = 'AirbnbCerealMedium';
-const book = 'AirbnbCerealBook';
+const medium = 'AirbnbCerealMedium'; // this is a custom font 
+const book = 'AirbnbCerealBook'; // this is a custom font 
 
 const FollowerScreen = () => {
-    const follower = useSelector(state => state.FollowReducer.followers);
+    const follower = useSelector(state => state.FollowReducer.followers); // useSelector is a hook from react-redux. used to select global state (followers) from the FollowReducer and used in the screen
 
     return (
         <View style={styles.container}>
+            {/* follower.length === 0 ? , follower from line 13 is array. if arrray is empty then if part display otherwise else part*/}
             { follower.length === 0 ?
+                // Card, CardItem, Body import from native base ui library
                 <Card style={styles.cardContainer}>
                     <CardItem>
                         <Body style={styles.alignItems}>
                             <Text style={styles.fontFamily}>
+                                {/* if follower is empty then No Followers Found ! text appears in card  */}
                                 No Followers Found !
                             </Text>
                         </Body>
                     </CardItem>
                 </Card>
             :
+                // this is else part if follower is not empty, follower.length != 0 this flatlist data display
                 <FlatList 
-                    data={follower}
-                    keyExtractor={item => (item.user_id).toString()} 
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => {
+                    data={follower} // follower from line 13, global state from follow reducer 
+                    keyExtractor={item => (item.user_id).toString()} // user id is a number so toString() converts anything in to string
+                    showsVerticalScrollIndicator={false} // it disappers the scroll indicator
+                    renderItem={({ item }) => { // render the data 
                         return (
+                            // Card, CardItem, Body import from native base ui library
                             <Card style={styles.secondViewCard}>
                                 <CardItem>
                                     <Body>
                                         <View style={styles.innerView}>
+                                            {/* this is a gravatar image */}
                                             <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.userImgFront} />
                                             <View style={styles.innerViewSecond}>
                                                 <Text style={styles.innerViewText}>
+                                                    {/* follower name  */}
                                                     {  item.given_name }
                                                 </Text>
                                                 <Text style={styles.innerViewTag}>
+                                                    {/* follower email to display only from 7 characters  */}
                                                     { item.email.substring(0, 7) }
                                                 </Text>
                                             </View>
@@ -56,6 +66,7 @@ const FollowerScreen = () => {
     );
 }
 
+//The below is all css and styling of screen
 const styles = StyleSheet.create({
     container: {
         flex: 1,

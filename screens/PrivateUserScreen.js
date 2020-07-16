@@ -1,3 +1,6 @@
+// This screen is used to display user by user Id. user id is coing from home screen by clicking on chit this screen appear.
+// This screen styling and code is same as userProfilescreen.js
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Image, RefreshControl, ActivityIndicator, StatusBar } from 'react-native';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -18,56 +21,70 @@ const PrivateUserScreen = ({ navigation, route }) => {
     const following = useSelector(state => state.FollowReducer.privatefollowings);
     const userImg = useSelector(state => state.UserReducer.allImg);
 
-    const { userId } = route.params;
+    // all above state are global state coming from reducers 
 
-    const [isFetching, setIsFetching] = useState(false);
-    const [error, setError] = useState();
+    // this is the userId coming from homescreen.js by route.params
+    const { userId } = route.params; 
+
+    const [isFetching, setIsFetching] = useState(false); 
+    // these are the states used for fetching data from the server.
+    // when api is calling then isFetching is true then when api call is complete then is fetching is false.
+
+    const [error, setError] = useState(); // If any error occurs in calling api for example in availability of internet.
+    // then error is true other wise empty or false.
+
     const [isRefreshing, setIsRefreshing] = useState(false);
+    // It is used for refreshing app by dragging down the screen
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); // it is used to dispatch the action from every screens. call the functions from action folders.
 
+    // async await is used with useCallback hook and try catch. please search on the internet.
     const userData = useCallback(async () => {
         setError(null);
         setIsRefreshing(true);
         try {
+            // below all actions are dispatching from action folder file. all the private user dat display by their id.
+            // passing id in function as argument
             await dispatch(UserActions.getUserById(userId));
             await dispatch(UserActions.getImageById(userId));
             await dispatch(FollowActions.getFollowersById(userId));
             await dispatch(FollowActions.getFollowingsById(userId));
         } catch (err) {
-            setError(true);
+            setError(true); // this line make  error true on line 28 if error true then line 65 code appears on screen
         }
-        setIsRefreshing(false);
+        setIsRefreshing(false); // this line make  isRefreshing false on line 31. used for pull to refresh. flatlist and scroll view
     }, [dispatch, setError, setIsRefreshing]);
 
 
-    useEffect(() => {
-        setIsFetching(true);
-        userData().then(() => {
-            setIsFetching(false);
+    useEffect(() => {   // useEffect hook is used to automatically render the component when the screen is open.
+        setIsFetching(true); // when data is fetching from server the setIsFetching make is fetching true. 
+        //you can see above on line 24
+        userData().then(() => {  // userData is a function. see above on line 36, this is used for dispatching actions and calling api
+            setIsFetching(false); // when data fetching from server is complete the setIsFetching make is fetching false. 
+            //you can see above on line 24
         });
     }, []);
 
-    if (isFetching) {
-        return (
+    if (isFetching) { // when is fetching is true then this calls and activity indicator appears, when it false then this not appears
+        return ( //you can check all the styles below
             <View style={styles.centered}>
                 <ActivityIndicator size='large' color='#027373' />
             </View>
         );
     }
 
-    if (error) {
+    if (error) { // when error is true then this calls and appears on screen, when it false then this not appears
         return (
             <View style={styles.centered}>
-                <Text>An error occurred!</Text>
+                <Text>An error occurred!</Text> 
                 <Button 
                     title='Try again' 
-                    onPress={userData}
+                    onPress={userData} // => when button  press then userData function calls on line 36
                     color='#020F59'
                 />
             </View>
         );
-    } 
+    }
 
     return (
         <ScrollView 

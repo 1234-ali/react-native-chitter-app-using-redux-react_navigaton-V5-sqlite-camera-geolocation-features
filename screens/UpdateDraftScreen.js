@@ -1,3 +1,6 @@
+// This file is same as pot screen.js but some minor changes. in ppost screen all the state are set to initial state for eg all the states are empty
+// but on update we update the previouse data so first we take the data from previouse screen like route.params then put the data in to initial state.
+// so in this it works.
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -18,18 +21,25 @@ const { height } = Dimensions.get('window');
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
+// below code same as post screen and post screen is commented
+
+// when clicking on update draft this screen appears and all the data we get in this screen from draft screen in params.
 const UpdateDraftScreen = ({ navigation, route }) => {
     const userImg = useSelector(state => state.UserReducer.userImg);
 
-    const { draftId, draftUserId, draftTitle, draftImage } = route.params;
+    const { draftId, draftUserId, draftTitle, draftImage } = route.params;  // get data from previouse screens by navigation params by using react navigation.
     
-    const [title, setTitle] = useState(draftTitle);
-    const [image, setImage] = useState(draftImage);
+    
+    const [title, setTitle] = useState(draftTitle); // you can see i initializing the state with previose screens data
+    const [image, setImage] = useState(draftImage); // you can see i initializing the state with previose screens data
 
     const [fetchingLocation, setFetchingLocation] = useState(false);
 
     const [lat, setLat] = useState('');
     const [lng, setLng] = useState('');
+
+    // note: latitude or longitude are not saving in drafts. only title and image are saving if you want post the latitude or longitude then
+    //  you can select the data from device
 
     const [isPosting, setIsPosting] = useState(false);
 

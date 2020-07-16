@@ -1,3 +1,7 @@
+// this screen is for private user following. when navigate from home screen on pressing chits then this screen tabs appear
+// this is same as followingscreen.js b8ut only that thing is different we ccant unfollow user because this is not our own profile
+//  else code is same 
+
 import React from 'react';
 import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -14,14 +18,6 @@ const PrivateFollowingScreen = () => {
     const following = useSelector(state => state.FollowReducer.privatefollowings);
 
     const dispatch = useDispatch();
-
-    const unFollowUser = async (id) => {
-        try {
-            await dispatch(FollowActions.unFollowUser(id));
-        } catch (error) {
-            Alert.alert(error.message);
-        }
-    }
 
     return (
         <View style={styles.container}>

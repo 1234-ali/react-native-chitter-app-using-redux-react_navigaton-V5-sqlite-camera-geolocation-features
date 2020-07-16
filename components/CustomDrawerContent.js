@@ -1,3 +1,6 @@
+//  this is a custom drawer navigator component file. this part working is same as post screen or userprofile screen.js
+
+// but you can search on youtube how to make custom drawer navigator
 import React, { useState } from 'react';
 import { View, Text, Image, StatusBar, StyleSheet, Dimensions, Share, Alert, TouchableOpacity, ImageBackground, ActivityIndicator  } from 'react-native';
 import { Container, Content, Header, Body } from 'native-base';

@@ -1,3 +1,5 @@
+// these all are types used in action and reducer folder 
+
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const USER_LOADED = 'USER_LOADED';
 export const AUTH_ERROR = 'AUTH_ERROR';

@@ -1,15 +1,18 @@
+//  this is used to post chits
+
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Card, CardItem, Body } from 'native-base';
 import Modal from 'react-native-modal';
-import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-picker';  // image picker is used to pick image from gallery mobile gallery and from camera
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from '@react-native-community/geolocation';  // it is used to pick device location in latitude or longiude
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector, useDispatch } from 'react-redux';
+
 import * as DraftActions from '../store/actions/DraftActions';
 import * as ChitActions from '../store/actions/ChitActions';
 
@@ -18,33 +21,37 @@ const { height } = Dimensions.get('window');
 const medium = 'AirbnbCerealMedium';
 const book = 'AirbnbCerealBook';
 
+//  All above are same please check other files like draft Screen.js
+
 const PostScreen = ({ navigation }) => {
-    const user = useSelector(state => state.UserReducer.user);
-    const userImg = useSelector(state => state.UserReducer.userImg);
+    const user = useSelector(state => state.UserReducer.user); // useSelector is a hook from react-redux. used to select global state (user) from the UserReducer and used in the screen
+    const userImg = useSelector(state => state.UserReducer.userImg); // useSelector is a hook from react-redux. used to select global state (userImg) from the UserReducer and used in the screen
 
-    const [title, setTitle] = useState('');
-    const [image, setImage] = useState('');
+    const [title, setTitle] = useState(''); // for chit title
+    const [image, setImage] = useState(''); // for chit image
     
-    const [fetchingLocation, setFetchingLocation] = useState(false);
+    const [fetchingLocation, setFetchingLocation] = useState(false); // for location
 
-    const [isImage, setIsImage] = useState(null);
+    const [isImage, setIsImage] = useState(null); // for image
 
-    const [lat, setLat] = useState('');
-    const [lng, setLng] = useState('');
+    const [lat, setLat] = useState(''); // for latitude
+    const [lng, setLng] = useState(''); // for longitude
 
     const [isPosting, setIsPosting] = useState(false);
 
-    const [isDrafting, setIsDrafting] = useState(false);
-    const [isCreated, setIsCreated] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const [isDrafting, setIsDrafting] = useState(false);  // for draft saving
+    const [isCreated, setIsCreated] = useState(false); // for posting chits
+    const [isError, setIsError] = useState(false); //  display error
 
-    const launchCamera = ()  => {
+    const launchCamera = ()  => {  // it is used to pick image from device.
         let options = {
             storageOptions: {
               skipBackup: true,
               path: 'images',
             },
         };
+
+        // used to launch camera and click the piture from camera
         
         ImagePicker.launchCamera(options, (response) => {
             if (response.didCancel) {
@@ -56,14 +63,14 @@ const PostScreen = ({ navigation }) => {
             } else {
                 const source = { uri: response.uri };
             
-                setImage(source.uri);
+                setImage(source.uri); // it is used o display image in the post screen
 
-                setIsImage(response);
+                setIsImage(response);  // set the image uri to send to server
             }
         });
     };
 
-    const launchImageLibrary = () => {
+    const launchImageLibrary = () => {  // used to lauch gallery and pick image 
         let options = {
           storageOptions: {
             skipBackup: true,
@@ -82,46 +89,47 @@ const PostScreen = ({ navigation }) => {
             } else {
                 const source = { uri: response.uri };
 
-                setImage(source.uri);
+                setImage(source.uri); // it is used o display image in the post screen
 
-                setIsImage(response);
+                setIsImage(response);  // set the image uri to send to server
             }
         });
     
     }
 
-    const getLocationHandler =  () => {
+    const getLocationHandler =  () => {  // used to get location from device
         setFetchingLocation(true);
-        Geolocation.getCurrentPosition(
+        Geolocation.getCurrentPosition(  // get position in longitude and latitude
             position => {
-              setLng(position.coords.longitude);
-              setLat(position.coords.latitude);
+              setLng(position.coords.longitude); // set in the lat state
+              setLat(position.coords.latitude); // set in the lng state
             },
             error => {
-                Alert.alert('Error', error.message);
+                Alert.alert('Error', error.message); // if any error occurs message display
             },
-            {enableHighAccuracy: false, timeout: 20000, maximumAge: 1000},
+            {enableHighAccuracy: false, timeout: 20000, maximumAge: 1000}, // options to pick location 
         );
         setFetchingLocation(false);
     };
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); // it is used to dispatch the action from every screens. call the functions from action folders.
 
-    const postSubmission = async () => {
+    const postSubmission = async () => {  // function used to post the chit and save date to server
         if (title == '') {
-            Alert.alert('Write the post');
+            Alert.alert('Write the post'); // if title field is empty
         } else {
-            setIsPosting(true);
+            setIsPosting(true);  // onPost chit it display modal 
             try {
-                await dispatch(ChitActions.postChits(title, lng, lat, isImage));
-                setIsCreated(true);
+                await dispatch(ChitActions.postChits(title, lng, lat, isImage)); // dispatching function from ChitActions file. 
+                // post chits() is the function written in  ChitActions file. and sending data as argument to post chit function
+                setIsCreated(true);  // if chit successfully create the changing the state to true and displat succes message
             } catch (error) {
-                setIsError(true);
+                setIsError(true); // it display error if error occurs
             }
         }
     };
 
-    const draftSubmission = async () => {
+    const draftSubmission = async () => {  // for draft saving in sqlite storage
         if (title == '', image == '') {
             Alert.alert('Enter text and image');
         } else {
@@ -135,29 +143,36 @@ const PostScreen = ({ navigation }) => {
         }
     };
 
-    const onError = () => {
+    const onError = () => {  // on error set all the states to initial state below
         setIsError(false);
         setIsCreated(false);
         setIsDrafting(false);
         setIsPosting(false);
     };
-
-    const onNavigate = () => {
+ 
+    const onNavigate = () => { // this function is used to navigate to home screen. when post will chits oer drafts are  save
         navigation.navigate('home');
     };
+
+
+    // all the function above are calling in return
 
     return (
         <View style={styles.container}>
             <View style={styles.firstContainer}>
+                {/* onPress={() => navigation.goBack()} => used to nvigate to previouse screen */}
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.brushContainer}>
                     <Ionicons name='ios-close' style={styles.brushText} />
                 </TouchableOpacity>
                 <View style={styles.flexDirection}>
+
+                {/* calling postSubmission  funtion to save chit in database from server* */}
                 <TouchableOpacity onPress={postSubmission} style={{ ...styles.PostContainer }}>
                     <Text style={styles.postText}>
                         Post
                     </Text>
                 </TouchableOpacity>
+                {/* calling draftSubmission  funtion to save draft in database from server* */}
                 <TouchableOpacity onPress={draftSubmission} style={styles.PostContainer}>
                     <Text style={styles.postText}>
                         Save Draft
@@ -167,9 +182,11 @@ const PostScreen = ({ navigation }) => {
             </View>
             <View style={styles.secondContainer}>
                 <View style={styles.flexDirection}>
-                    { userImg != ''  ?
+                    { userImg != ''  ? //if there is user image then if part display otherwise else part
+                        // this is if part
                         <Image source={{ uri: `data:${userImg.type};base64,${userImg.data}` }} style={styles.imgFront} />
                     :
+                        // this is else part
                         <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.imgFront} />
                     }
                     <TextInput 
@@ -178,20 +195,21 @@ const PostScreen = ({ navigation }) => {
                         autoFocus
                         placeholder="What's happening?"
                         style={styles.input}
-                        value={title}
-                        onChangeText={(text) => setTitle(text)}
+                        value={title} // for title
+                        onChangeText={(text) => setTitle(text)} // onchangetext changing the value of title input
                     />
                 </View>
                 <View style={styles.subContainer}>
                     <View style={styles.locationSubContainer}>
-                        { lat != '' &&  lng != '' &&
+                        { lat != '' &&  lng != '' &&  // if lat or lng state are not empty then below part is appear
                             <>
                                 <View style={styles.locationContainer}>
                                     <Text style={styles.locationText}>
                                         Latitude: 
                                     </Text>
                                     <Text style={{...styles.locationText, marginLeft: wp(1)}}>
-                                        {lat.toFixed(3)} 
+                                        {/* latitude, tofixed() is built in javascript methd to display float value .3 digits */}
+                                        {lat.toFixed(3)}  
                                     </Text>
                                 </View>
                                 <View style={styles.locationContainer}>
@@ -199,6 +217,7 @@ const PostScreen = ({ navigation }) => {
                                         Longitude: 
                                     </Text>
                                     <Text style={{...styles.locationText, marginLeft: wp(1)}}>
+                                        {/* logitude, tofixed() is built in javascript methd to display float value .2 digits */}
                                         {lng.toFixed(2)}
                                     </Text>
                                 </View>
@@ -206,9 +225,11 @@ const PostScreen = ({ navigation }) => {
                         }
                     </View>
 
-                    { image != '' &&
+                    { image != '' &&  //if image state is not empty then belo part display
                         <View >
+                            {/* image display selected by using image picker */}
                             <Image source={{ uri: `${image}` }} style={styles.img} />
+                            {/* onPress={() => setImage('')} => is for to cancel the image or remove he image  */}
                             <TouchableOpacity onPress={() => setImage('')} style={styles.imgIconContainer}>
                                 <Ionicons name='ios-close' style={styles.imgIcon} />
                             </TouchableOpacity>
@@ -231,6 +252,8 @@ const PostScreen = ({ navigation }) => {
                     }
                 </TouchableOpacity>
             </View>
+
+            {/* below Modal is for display post chits. isVisible={isPosting} , isPosting is true modal dispay else not display  */}
             <Modal isVisible={isPosting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
                     <View style={styles.modalCardView}>
                         { !isCreated ? 
@@ -240,14 +263,17 @@ const PostScreen = ({ navigation }) => {
                                 <CardItem style={styles.modalCardItem}>
                                     <Body style={styles.modalPortfolio}>
                                         <Text style={styles.modalPortfolioText}>
+                                            {/* if error occur then error text display else chit post text display */}
                                             {isError ? 'An Error Occured' : 'Chit Post'}
                                         </Text>
                                         <TouchableOpacity 
+                                            // if is error occur the on press onError function calls other wise onNavigate funtion call
                                             onPress={isError ? onError : onNavigate}  
                                             activeOpacity={0.6} 
                                             style={styles.modalCardButtonContainer}
                                         >
                                             <Text style={styles.modalCardButtonText}>
+
                                                 {isError ? 'Try Again' : 'Go To Main Screen'}
                                             </Text>
                                         </TouchableOpacity>
@@ -257,7 +283,9 @@ const PostScreen = ({ navigation }) => {
                         }
                     </View>
                 </Modal>
-            <Modal isVisible={isDrafting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
+
+                {/* below Modal is for display daft sqlite storage => isVisible={isDrafting} , isDrafting is true modal dispay else not display  */}
+                <Modal isVisible={isDrafting} hasBackdrop={true} animationIn="fadeIn" animationOut="fadeOut" backdropTransitionOutTiming={0}>
                     <View style={styles.modalCardView}>
                         { !isCreated ? 
                             <ActivityIndicator size='large' color='white' />
@@ -266,14 +294,17 @@ const PostScreen = ({ navigation }) => {
                                 <CardItem style={styles.modalCardItem}>
                                     <Body style={styles.modalPortfolio}>
                                         <Text style={styles.modalPortfolioText}>
+                                            {/* if error occur then error text display else Draft Saved text display */}
                                             {isError ? 'An Error Occured' : 'Draft Saved'}
                                         </Text>
                                         <TouchableOpacity 
+                                            // if is error occur the on press onError function calls other wise onNavigate funtion call
                                             onPress={isError ? onError : onNavigate}  
                                             activeOpacity={0.6} 
                                             style={styles.modalCardButtonContainer}
                                         >
                                             <Text style={styles.modalCardButtonText}>
+                                                {/* if error occur then Try Again text display else Go To Main Screen text display */}
                                                 {isError ? 'Try Again' : 'Go To Main Screen'}
                                             </Text>
                                         </TouchableOpacity>
@@ -287,6 +318,8 @@ const PostScreen = ({ navigation }) => {
     );
 }
 
+
+//below is the css of this screen
 const styles = StyleSheet.create({
     container: {
         flex: 1,

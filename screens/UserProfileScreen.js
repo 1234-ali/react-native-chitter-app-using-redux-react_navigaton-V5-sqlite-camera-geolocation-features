@@ -1,3 +1,6 @@
+// Thee screen display data of login user.
+// The working is it get all the data from global states by using useSelector hook below 
+// and display the data in to this screen
 import React from 'react';
 import { View, Text, StyleSheet, TouchableWithoutFeedback, Image, TouchableOpacity, StatusBar } from 'react-native';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -22,6 +25,7 @@ const UserProfileScreen = ({ navigation }) => {
             <Header style={styles.headerContainer}>
                 <StatusBar barStyle="dark-content" backgroundColor="white" /> 
                 <View>
+                    {/* go back to previouse screen */}
                     <TouchableWithoutFeedback onPress={() => navigation.goBack()}> 
                         <Icon name='arrow-back' style={styles.backIcon} />
                     </TouchableWithoutFeedback>
@@ -29,13 +33,15 @@ const UserProfileScreen = ({ navigation }) => {
                 <View>
                     <Title style={styles.header}>User Profile</Title>
                 </View>
+
+                {/* navigate to user to update user profile data like login user email, password, name etc */}
                 <TouchableOpacity onPress={() => navigation.navigate('user')} style={styles.brushContainer}>
                     <Ionicons name='ios-settings' style={styles.brushText} />
                 </TouchableOpacity>
             </Header>
             <View style={styles.secondContainer}>
                 <View style={styles.imgContainer}>
-                    { userImg != ''  ?
+                    { userImg != ''  ? // to user image if=g userImg globalstate is not empty if empty thwen display gravatar
                             <Image source={{ uri: `data:${userImg.type};base64,${userImg.data}` }} style={styles.img} />
                         :
                             <Image source={{ uri: 'http://www.gravatar.com/avatar/?d=mm' }} style={styles.img} />
@@ -43,12 +49,14 @@ const UserProfileScreen = ({ navigation }) => {
                 </View>
                 <View style={styles.textContainer}>
                     <Text style={styles.text}>
+                        {/* display user given name and family name */}
                         { user != null && user.given_name } { user != null && user.family_name }
                     </Text>
                 </View>
                 <View style={styles.marginTop}>
                     <View style={styles.followerContainer}>
                         <Text style={{ ...styles.followerText, marginRight: 6 }}>
+                            {/* follower global state length write here  on line 19 */}
                             { follower.length }
                         </Text>
                         <Text style={styles.followerText}>
@@ -57,6 +65,7 @@ const UserProfileScreen = ({ navigation }) => {
                     </View>
                     <View style={{...styles.followerContainer, marginTop: hp(1), marginBottom: hp(3.5)}}>
                         <Text style={{ ...styles.followerText, marginRight: 6 }}>
+                            {/* following global state length write here  on line 20 */}
                             { following.length }
                         </Text>
                         <Text style={styles.followerText}>
@@ -65,14 +74,16 @@ const UserProfileScreen = ({ navigation }) => {
                     </View>
                 </View>
             </View>
+            {/* tabs are used from native base lie folowers and following */}
+
+            {/* tabBarUnderlineStyle={{ backgroundColor: 'silver' }} => it gives the tab underlined color */}
             <Tabs tabBarUnderlineStyle={{ backgroundColor: 'silver' }} >
                 <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Followers</Text></TabHeading>}>
-                    <FollowerScreen />
+                    {/*  follower screen.js use here, import above on line 11. it is a child of userprofilescreen.js */}
+                    <FollowerScreen /> 
                 </Tab>
-                {/* <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Chitters</Text></TabHeading>}>
-                    <ChitterScreen />
-                </Tab> */}
                 <Tab heading={ <TabHeading style={styles.tab}><Text style={styles.tabTextColor}>Following</Text></TabHeading>}>
+                    {/*  FollowingScreen.js use here import above on line 12. it is a child of userprofilescreen.js */}
                     <FollowingScreen />
                 </Tab>
             </Tabs>

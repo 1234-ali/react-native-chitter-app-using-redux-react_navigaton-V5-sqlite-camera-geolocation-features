@@ -27,8 +27,6 @@ const SearchScreen = ({ navigation }) => {
     const [error, setError] = useState();
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const [isFollowing, setIsFollowing] = useState([]);
-
     const dispatch = useDispatch();
 
     const userChits = useCallback(async () => {

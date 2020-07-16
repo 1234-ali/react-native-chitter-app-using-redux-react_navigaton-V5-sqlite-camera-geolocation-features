@@ -1,3 +1,7 @@
+// this screen is for private user follower. when navigate from home screen on pressing chits then this screen tabs appear
+// this is same as follower screen.js
+//  code is same 
+
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';

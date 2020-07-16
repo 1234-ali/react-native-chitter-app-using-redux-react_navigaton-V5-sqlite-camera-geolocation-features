@@ -1,17 +1,19 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
-import thunk from 'redux-thunk';
+import thunk from 'redux-thunk'; // it is a middle ware
 
-import { init } from './helpers/db';
+import { init } from './helpers/db'; // the line is to import init function form db.js to start sqlite storage
 
-const middleware = [thunk];
+const middleware = [thunk];  // This is the middleware connect react native code to redux
 
+// all the app reducer import here from store folder and create store
 import UserReducer from './store/reducers/UserReducer';
 import DraftReducer from './store/reducers/DraftReducer';
 import ChitReducer from './store/reducers/ChitReducer';
 import FollowReducer from './store/reducers/FollowReducer';
 
+// we combine all the reducer below
 const rootReducer = combineReducers({
   UserReducer,
   DraftReducer,
@@ -19,6 +21,7 @@ const rootReducer = combineReducers({
   FollowReducer,
 });
 
+// now we create a store of reducers and applying middleware
 const store = createStore(
   rootReducer,
   applyMiddleware(...middleware)
@@ -26,7 +29,7 @@ const store = createStore(
 
 import ChitterNavigator from './navigation/ChitterNavigator';
 
-init()
+init() //This is starting or inializing the sqlite storage database
   .then(() => {
     console.log('Initialized database');
   })
@@ -37,8 +40,10 @@ init()
 
 const App = () => {
   return (
+    // provider is from react-redux, it provide the store of reducer to the app, thats all the state are used on every screen
     <Provider store={store}>
-      <ChitterNavigator />
+      {/* ChitterNavigator is from navigation folder it is the main file where all the screen we place. */}
+      <ChitterNavigator /> 
     </Provider>
   );
 };

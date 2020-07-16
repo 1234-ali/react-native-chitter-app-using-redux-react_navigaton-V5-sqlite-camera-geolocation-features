@@ -1,3 +1,5 @@
+// this file is for updating user data in setting . it woring is same as login or sign up screen
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Image, TouchableWithoutFeedback, Animated, Dimensions, ActivityIndicator, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
